@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>寶貝我愛你童裝 - 門市社群</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "PingFang TC", sans-serif;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            background: url('https://storage.googleapis.com/status_lihi/img/bg-1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            padding: 16px 12px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            background: #ffffff;
+            border-radius: 50px;
+            padding: 16px 20px;
+            min-height: 56px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+        }
+
+        .btn-link:active {
+            transform: scale(0.97);
+            background: #f5f5f5;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .btn-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .btn-line {
+            border-left: 5px solid #06C755;
+        }
+
+        .btn-fb {
+            border-left: 5px solid #1877F2;
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 19px;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            letter-spacing: 1px;
+        }
+
+        /* 說明文字區塊 */
+        .info-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            text-align: left;
+        }
+
+        .info-card h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .info-card .subtitle {
+            font-size: 15px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .info-card h2 {
+            font-size: 17px;
+            color: #333;
+            margin: 18px 0 10px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            font-size: 15px;
+            color: #444;
+            padding: 5px 0;
+            line-height: 1.6;
+        }
+
+        .info-card .notice {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+            margin-top: 6px;
+        }
+
+        .icon-line {
+            background: #06C755;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .icon-fb {
+            background: #1877F2;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        /* ===== 電腦版微調（螢幕寬度 > 600px） ===== */
+        @media (min-width: 600px) {
+            body { padding: 30px 20px; }
+            .btn-link:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            }
+            .btn-link:active { transform: translateY(0); }
+        }
+    </style>
+    <script>
+        function openFbGroup(groupId, e) {
+            e.preventDefault();
+            var webUrl = 'https://www.facebook.com/groups/' + groupId;
+            var ua = navigator.userAgent || '';
+            var isAndroid = /Android/i.test(ua);
+            var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+            if (isAndroid) {
+                var intent = 'intent://group/' + groupId + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
+                window.location.href = intent;
+            } else if (isIOS) {
+                window.location.href = 'fb://group/' + groupId;
+                setTimeout(function() { window.open(webUrl, '_blank'); }, 500);
+            } else {
+                window.open(webUrl, '_blank');
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LOGO / 主圖 -->
+    <img class="logo"
+         src="https://storage.googleapis.com/status_lihi/status/eeePsPe1kcbJStuOwHkAGaSSwp76BdKh8mN7VRRH.png"
+         alt="寶貝我愛你童裝">
+
+    <!-- ===== 說明文字區塊（可自行修改） ===== -->
+    <div class="info-card">
+        <h1>寶貝團購｜美食・童裝</h1>
+        <div class="subtitle">
+            新鮮蔬果、海鮮食材及各地排隊美食<br>
+            臉書社團及LINE社群皆可快速下單！
+        </div>
+
+        <h2>📌 我們的服務與保證</h2>
+        <ul>
+            <li>✅ 電子發票</li>
+            <li>✅ 專業冷凍保存</li>
+            <li>✅ 藥商許可執照（醫療口罩）</li>
+            <li>✅ 實體店面取貨安心</li>
+        </ul>
+
+        <h2>📢 LINE社群公告與營業時間</h2>
+        <div class="notice">
+            加入後，<br>
+            點選頁面上方公告即可查看完整資訊。
+        </div>
+    </div>
+
+    <!-- ===== 美食團購 LINE 下單 ===== -->
+    <div class="section-title">美食團購 LINE 下單</div>
+    <div class="btn-list">
+
+        <a class="btn-link btn-line" href="https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w" target="_blank">
+            <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>
+            <span class="btn-text">🍴【八德金和店】美食團購LINE下單</span>
+        </a>
+
+        <a class="btn-link btn-line" href="https://line.me/ti/g2/5avBIMos0-baOGO7O-LdpnRh82tO0hREGqJeOQ" target="_blank">
+            <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3z"/></svg>
+            <span class="btn-text">🍴【桃園蓮埔店】美食團購LINE下單</span>
+        </a>
+
+        <a class="btn-link btn-line" href="https://line.me/ti/g2/h9ECFqVTCqM_w6xKZg9Jw_E-T8h6luG8P6X3cw" target="_blank">
+            <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3z"/></svg>
+            <span class="btn-text">🍴【中壢環北店】美食團購LINE下單</span>
+        </a>
+
+        <a class="btn-link btn-line" href="https://line.me/ti/g2/e1Nz6cK_jZ7Ft65-zG-VbzWX1NCgILK1WYeXVA" target="_blank">
+            <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3z"/></svg>
+            <span class="btn-text">🍴【苗栗國華店】美食團購LINE下單</span>
+        </a>
+    </div>
+
+    <!-- ===== 社群連結 ===== -->
+    <div class="section-title">社群連結</div>
+    <div class="btn-list">
+
+        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/360124028800443" onclick="openFbGroup('360124028800443', event)">
+            <svg class="btn-icon icon-fb" viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>
+            <span class="btn-text">🍴【美食團購】臉書社團</span>
+        </a>
+
+        <a class="btn-link btn-line" href="https://line.me/ti/g2/IzuNEWWVBDBUXqL6cLX3TS2RvBuYUlaHUY71XA" target="_blank">
+            <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3z"/></svg>
+            <span class="btn-text">👗【童裝女裝用品】LINE社群</span>
+        </a>
+
+        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/541624749321013" onclick="openFbGroup('541624749321013', event)">
+            <svg class="btn-icon icon-fb" viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>
+            <span class="btn-text">🛍️【童裝女裝用品】臉書社團</span>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
