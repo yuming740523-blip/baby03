@@ -259,8 +259,8 @@ function openFbGroup(groupId, e) {
         var intent = 'intent://group/' + groupId + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
         window.location.href = intent;
     } else if (isIOS) {
-        window.location.href = 'fb://group/' + groupId;
-        setTimeout(function() { window.open(webUrl, '_blank'); }, 500);
+        window.location.href = 'fb://facewebmodal/f?href=' + encodeURIComponent(webUrl);
+        setTimeout(function() { window.open(webUrl, '_blank'); }, 1500);
     } else {
         window.open(webUrl, '_blank');
     }
