@@ -228,7 +228,7 @@
     <div class="section-title">社群連結</div>
     <div class="btn-list">
 
-        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/360124028800443" target="_blank">
+        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/360124028800443" onclick="return openFbGroup('360124028800443', this)" target="_blank">
             <svg class="btn-icon icon-fb" viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>
             <span class="btn-text">🍴【美食團購】臉書社團</span>
         </a>
@@ -238,7 +238,7 @@
             <span class="btn-text">👗【童裝女裝用品】LINE社群</span>
         </a>
 
-        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/541624749321013" target="_blank">
+        <a class="btn-link btn-fb" href="https://www.facebook.com/groups/541624749321013" onclick="return openFbGroup('541624749321013', this)" target="_blank">
             <svg class="btn-icon icon-fb" viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>
             <span class="btn-text">🛍️【童裝女裝用品】臉書社團</span>
         </a>
@@ -247,5 +247,29 @@
 
 </div>
 
+<script>
+function openFbGroup(groupId, el) {
+    var ua = navigator.userAgent || '';
+    var isAndroid = /Android/i.test(ua);
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
+    var webUrl = el.href;
+
+    if (isAndroid) {
+        // Android: intent scheme，開不了 APP 就 fallback 網頁
+        var intent = 'intent://group/' + groupId + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
+        window.location.href = intent;
+        return false;
+    } else if (isIOS) {
+        // iOS: 先嘗試 fb:// scheme，超時 fallback 網頁
+        window.location.href = 'fb://group/' + groupId;
+        setTimeout(function() {
+            window.location.href = webUrl;
+        }, 1500);
+        return false;
+    }
+    // PC: 直接用預設 href 開網頁
+    return true;
+}
+</script>
 </body>
 </html>
