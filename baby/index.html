@@ -255,11 +255,11 @@ function openFbGroup(groupId, el) {
     var webUrl = el.href;
 
     if (isAndroid) {
-        var intent = 'intent://group/' + groupId + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
+        var intent = 'intent://www.facebook.com/groups/' + groupId + '#Intent;scheme=https;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
         window.location.href = intent;
         return false;
     } else if (isIOS) {
-        window.location.href = 'fb://group/' + groupId;
+        window.location.href = 'fb://group?id=' + groupId;
         setTimeout(function() {
             window.location.href = webUrl;
         }, 1500);

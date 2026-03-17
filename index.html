@@ -255,13 +255,13 @@ function openFbGroup(groupId, el) {
     var webUrl = el.href;
 
     if (isAndroid) {
-        // Android: intent scheme，開不了 APP 就 fallback 網頁
-        var intent = 'intent://group/' + groupId + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
+        // Android: intent 用 https scheme，讓 Facebook APP 攔截處理
+        var intent = 'intent://www.facebook.com/groups/' + groupId + '#Intent;scheme=https;package=com.facebook.katana;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
         window.location.href = intent;
         return false;
     } else if (isIOS) {
-        // iOS: 先嘗試 fb:// scheme，超時 fallback 網頁
-        window.location.href = 'fb://group/' + groupId;
+        // iOS: 用 fb://group?id= 格式
+        window.location.href = 'fb://group?id=' + groupId;
         setTimeout(function() {
             window.location.href = webUrl;
         }, 1500);
