@@ -1,7 +1,8 @@
 """
 baby03 本地部署伺服器
 - 提供靜態檔案服務（http://localhost:7788）
-- POST /deploy → 寫入 index.html + git add commit push
+- 根路徑 / 自動導向 editor.html（本地編輯器）
+- POST /deploy → 更新 index.html 的 DEFAULT_DATA + git add commit push
 使用方式：雙擊 start-editor.bat 即可
 """
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -21,8 +22,9 @@ class Handler(BaseHTTPRequestHandler):
     # ── 靜態檔案 ────────────────────────────────────────
     def do_GET(self):
         path = self.path.split('?')[0]
+        # 根路徑導向本地編輯器（不對外公開）
         if path == '/':
-            path = '/index.html'
+            path = '/editor.html'
         fp = os.path.join(REPO_DIR, path.lstrip('/').replace('/', os.sep))
         if os.path.isfile(fp):
             ext = fp.rsplit('.', 1)[-1].lower() if '.' in fp else ''
@@ -59,57 +61,82 @@ class Handler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get('Content-Length', 0))
             body   = json.loads(self.rfile.read(length).decode('utf-8'))
-            html   = body.get('html', '')
-            if not html:
+            data   = body.get('data')
+            if not data:
                 self._json(400, False, '內容為空')
                 return
         except Exception as e:
             self._json(400, False, f'解析失敗：{e}')
             return
 
-        # 1. 寫入 index.html
+        # 1. 讀取 index.html 模板
         index_path = os.path.join(REPO_DIR, 'index.html')
         try:
+            with open(index_path, 'r', encoding='utf-8') as f:
+                template = f.read()
+        except Exception as e:
+            self._json(500, False, f'讀取模板失敗：{e}')
+            return
+
+        # 2. 替換 DEFAULT_DATA 區塊
+        START = '// @@DATA_START@@\n'
+        END   = '\n// @@DATA_END@@'
+        s = template.find(START)
+        e = template.find(END)
+        if s < 0 or e < 0:
+            self._json(500, False, '找不到資料標記，請確認 index.html 格式')
+            return
+        data_json = json.dumps(data, ensure_ascii=False, indent=4)
+        new_html = (template[:s + len(START)]
+                    + f'const DEFAULT_DATA = {data_json};'
+                    + template[e:])
+
+        # 3. 寫入 index.html
+        try:
             with open(index_path, 'w', encoding='utf-8', newline='\n') as f:
-                f.write(html)
+                f.write(new_html)
         except Exception as e:
             self._json(500, False, f'寫檔失敗：{e}')
             return
 
-        # 2. git add
+        # 4. git add
         r = subprocess.run(
             ['git', 'add', 'index.html'],
-            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8'
+            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
+            stdin=subprocess.DEVNULL
         )
         if r.returncode != 0:
             self._json(500, False, f'git add 失敗：{r.stderr}')
             return
 
-        # 3. 確認是否有變更
+        # 5. 確認是否有變更
         diff = subprocess.run(
             ['git', 'diff', '--cached', '--name-only'],
-            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8'
+            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
+            stdin=subprocess.DEVNULL
         )
         if not diff.stdout.strip():
             self._json(200, True, '內容未變更，已是最新版本')
             return
 
-        # 4. git commit
+        # 6. git commit
         r = subprocess.run(
             ['git', 'commit', '-m', 'update: content via editor'],
-            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8'
+            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
+            stdin=subprocess.DEVNULL
         )
         if r.returncode != 0:
             self._json(500, False, f'git commit 失敗：{r.stderr}')
             return
 
-        # 5. git push
+        # 7. git push
         r = subprocess.run(
-            ['git', 'push'],
-            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8'
+            ['git', 'push', 'origin', 'master'],
+            cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
+            stdin=subprocess.DEVNULL
         )
         if r.returncode != 0:
-            self._json(500, False, f'git push 失敗：{r.stderr}')
+            self._json(500, False, f'git push 失敗：{r.stderr.strip()}')
             return
 
         self._json(200, True, '已成功部署到 GitHub Pages！')
@@ -130,12 +157,11 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def log_message(self, fmt, *args):
-        pass  # 不輸出 HTTP log，避免編碼問題
+        pass  # 不輸出 HTTP log
 
 
 if __name__ == '__main__':
     import io
-    # 強制 stdout 使用 UTF-8
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
@@ -144,7 +170,6 @@ if __name__ == '__main__':
     print(f'[  ] 請在瀏覽器開啟以上網址進行編輯')
     print(f'[  ] 關閉此視窗將停止伺服器\n', flush=True)
 
-    # 啟動後 1 秒自動開瀏覽器
     def open_browser():
         import webbrowser
         webbrowser.open(f'http://localhost:{PORT}')
