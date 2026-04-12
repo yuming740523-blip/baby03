@@ -105,19 +105,20 @@
         }
         .admin-toggle:hover { background:rgba(0,0,0,0.55); color:#fff; }
 
-        /* ── LINE widget ── */
+        /* ── Messenger widget ── */
         .line-widget {
             position:fixed; bottom:22px; right:14px; z-index:500; display:flex;
         }
         .line-widget-btn {
             display:flex; align-items:center; gap:8px;
-            background:#06C755; color:#fff; border-radius:50px;
+            background:linear-gradient(135deg,#8a3ab9,#0084ff);
+            color:#fff; border-radius:50px;
             padding:12px 20px; font-size:15px; font-weight:700;
             font-family:inherit; text-decoration:none; white-space:nowrap;
-            box-shadow:0 4px 16px rgba(6,199,85,0.5);
+            box-shadow:0 4px 16px rgba(0,132,255,0.45);
             transition:transform 0.15s, box-shadow 0.15s;
         }
-        .line-widget-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(6,199,85,0.6); }
+        .line-widget-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,132,255,0.6); }
         .line-widget-btn:active { transform:scale(0.97); }
         .line-widget-btn svg { width:22px; height:22px; flex-shrink:0; }
 
@@ -200,11 +201,11 @@
 <!-- ── Main Content ── -->
 <div class="container" id="app"></div>
 
-<!-- ── LINE Float Widget ── -->
+<!-- ── Messenger Float Widget ── -->
 <div class="line-widget" id="lineWidget" style="display:none">
     <a class="line-widget-btn" id="lineWidgetBtn" href="#" target="_blank">
-        <svg viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>
-        <span id="lineWidgetText">加入LINE社群</span>
+        <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.145 2 11.259c0 2.84 1.317 5.38 3.396 7.106V22l3.086-1.697c.824.228 1.698.351 2.603.351 5.523 0 10-4.145 10-9.259C21.085 6.145 17.523 2 12 2zm1.02 12.476l-2.55-2.72-4.976 2.72 5.476-5.816 2.613 2.72 4.913-2.72-5.476 5.816z"/></svg>
+        <span id="lineWidgetText">私訊粉絲專頁</span>
     </a>
 </div>
 
@@ -283,8 +284,8 @@ const DEFAULT_DATA = {
     ],
     "widget": {
         "on": true,
-        "text": "加入LINE社群",
-        "url": "https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w"
+        "text": "私訊粉絲專頁",
+        "url": "https://m.me/babyiloveyougo"
     }
 };
 // @@DATA_END@@
@@ -566,7 +567,7 @@ function delBtn(sec, idx) {
 function showLineConfig() {
     const w = D.widget;
     document.getElementById('modal').innerHTML = `
-        <h3>LINE 浮動按鈕設定</h3>
+        <h3>Messenger 浮動按鈕設定</h3>
         <label>顯示狀態</label>
         <select id="wOn">
             <option value="1" ${w.on?'selected':''}>顯示</option>
@@ -574,7 +575,7 @@ function showLineConfig() {
         </select>
         <label>按鈕文字</label>
         <input id="wText" type="text" value="${esc(w.text)}">
-        <label>LINE 連結網址</label>
+        <label>Messenger 連結網址（m.me/...）</label>
         <input id="wUrl" type="url" value="${esc(w.url)}">
         <div class="modal-btns">
             <button class="m-can" onclick="closeModal()">取消</button>
