@@ -183,11 +183,28 @@ function render() {
 
     if (D.widget.on) {
         document.body.insertAdjacentHTML('beforeend',
-            `<a class="messenger-btn" href="${esc(D.widget.url)}" target="_blank">
+            `<a class="messenger-btn" href="${esc(D.widget.url)}" onclick="return openMessenger(event,this.href)">
                 <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.145 2 11.259c0 2.84 1.317 5.38 3.396 7.106V22l3.086-1.697c.824.228 1.698.351 2.603.351 5.523 0 10-4.145 10-9.259C21.085 6.145 17.523 2 12 2zm1.02 12.476l-2.55-2.72-4.976 2.72 5.476-5.816 2.613 2.72 4.913-2.72-5.476 5.816z"/></svg>
                 ${esc(D.widget.text)}
             </a>`);
     }
+}
+
+// 平台偵測：Android 用 intent://，iOS 用 m.me（Universal Link），桌面新分頁
+function openMessenger(e, url) {
+    const m = url.match(/m\.me\/([^?\/#]+)/);
+    if (!m) return true; // 非 m.me 連結，讓瀏覽器預設處理
+    e.preventDefault();
+    const username = m[1];
+    const ua = navigator.userAgent;
+    if (/Android/i.test(ua)) {
+        window.location.href = `intent://user/${username}#Intent;scheme=fb-messenger;package=com.facebook.orca;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+    } else if (/iPad|iPhone|iPod/.test(ua)) {
+        window.location.href = url;
+    } else {
+        window.open(url, '_blank');
+    }
+    return false;
 }
 
 render();
