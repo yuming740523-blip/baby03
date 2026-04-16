@@ -51,6 +51,36 @@
         .icon-line { background:#06C755; border-radius:8px; padding:5px; }
         .icon-fb   { background:#1877F2; border-radius:8px; padding:5px; }
 
+        /* ── Featured store ── */
+        .btn-featured {
+            transform:scale(1.04); position:relative;
+            box-shadow:0 4px 20px rgba(233,30,99,0.35) !important;
+            border-left-width:6px !important;
+        }
+        .featured-badge {
+            position:absolute; top:-9px; right:12px;
+            background:linear-gradient(135deg,#ff6b9d,#e91e63);
+            color:#fff; font-size:11px; font-weight:700;
+            padding:2px 10px; border-radius:10px; white-space:nowrap;
+        }
+        .btn-secondary { opacity:0.65; transform:scale(0.96); }
+
+        /* ── Hot deals banner ── */
+        .hot-deals-btn {
+            display:block; text-align:center; text-decoration:none;
+            background:linear-gradient(135deg,#ff6b35,#e91e63);
+            color:#fff; font-size:17px; font-weight:700;
+            padding:16px 20px; border-radius:16px; margin-bottom:16px;
+            box-shadow:0 4px 16px rgba(233,30,99,0.4);
+            transition:transform 0.15s;
+            animation:hotPulse 2s ease-in-out infinite;
+        }
+        .hot-deals-btn:active { transform:scale(0.97); }
+        @keyframes hotPulse {
+            0%,100% { box-shadow:0 4px 16px rgba(233,30,99,0.4); }
+            50% { box-shadow:0 6px 28px rgba(233,30,99,0.7); }
+        }
+
         /* ── Floating widgets ── */
         .float-widgets {
             position:fixed; bottom:22px; right:14px; z-index:500;
@@ -157,6 +187,12 @@ const DEFAULT_DATA = {
         "on": true,
         "text": "查看訂單",
         "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/icon_main"
+    },
+    "featuredStore": 0,
+    "hotDeals": {
+        "on": true,
+        "text": "🔥 本週熱門團購 — 查看板橋宏國店商品",
+        "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/store"
     }
 };
 // @@DATA_END@@
@@ -170,11 +206,15 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function nl2br(s) { return esc(s).replace(/\n/g,'<br>'); }
 
 function buildBtns(sec) {
-    return D[sec].map(b => {
+    const fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
+    return D[sec].map((b, i) => {
         const icon = b.t === 'line' ? LINE_ICON : FB_ICON;
         const cls  = b.t === 'line' ? 'btn-line' : 'btn-fb';
-        return `<a class="btn-link ${cls}" href="${esc(b.url)}" target="_blank">
-            ${icon}<span class="btn-text">${esc(b.label)}</span>
+        const isFeatured = sec === 'sec1' && i === fi;
+        const extra = isFeatured ? ' btn-featured' : (fi >= 0 && sec === 'sec1' ? ' btn-secondary' : '');
+        const badge = isFeatured ? '<span class="featured-badge">⭐ 主力推薦</span>' : '';
+        return `<a class="btn-link ${cls}${extra}" href="${esc(b.url)}" target="_blank">
+            ${icon}<span class="btn-text">${esc(b.label)}</span>${badge}
         </a>`;
     }).join('');
 }
@@ -191,6 +231,7 @@ function render() {
         <h2>${esc(D.noticeTitle)}</h2>
         <div class="notice">${nl2br(D.notice)}</div>
     </div>
+    ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     <div class="section-row"><div class="section-title">${esc(D.sec1Title)}</div></div>
     <div class="btn-list">${buildBtns('sec1')}</div>
     <div class="section-row"><div class="section-title">${esc(D.sec2Title)}</div></div>
