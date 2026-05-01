@@ -2,7 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="寶貝我愛你童裝｜美食團購、童裝女裝用品 LINE 社群與 Facebook 社團入口頁，全台 5 間實體門市，支援 LINE PAY／信用卡／匯款，開立電子發票。">
     <title>寶貝我愛你童裝 - 門市社群</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -17,7 +18,7 @@
             padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
         .container { max-width:500px; width:100%; text-align:center; padding:20px 0; }
-        .logo { width:100%; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; }
+        .logo { width:100%; height:auto; aspect-ratio:1/1; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
         .btn-link {
             display:flex; align-items:center; text-decoration:none;
@@ -119,7 +120,7 @@
 </head>
 <body>
 
-<div class="container" id="app"></div>
+<main class="container" id="app"></main>
 
 <script>
 // @@DATA_START@@
@@ -231,8 +232,13 @@ function buildBtns(sec) {
 
 function render() {
     document.body.style.backgroundImage = `url('${D.bg}')`;
+    const logoSrc = esc(D.logo);
+    const webpSrc = logoSrc.replace(/\.png(\?.*)?$/i, '.webp$1');
     document.getElementById('app').innerHTML = `
-    <img class="logo" src="${esc(D.logo)}" alt="${esc(D.cardTitle)}">
+    <picture>
+        <source type="image/webp" srcset="${webpSrc}">
+        <img class="logo" src="${logoSrc}" alt="${esc(D.cardTitle)}" width="500" height="500" fetchpriority="high" decoding="async">
+    </picture>
     <div class="info-card">
         <h1>${esc(D.cardTitle)}</h1>
         <div class="subtitle">${nl2br(D.cardSubtitle)}</div>
