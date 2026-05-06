@@ -117,6 +117,26 @@
             .btn-link:hover { transform:translateY(-2px); box-shadow:0 5px 20px rgba(0,0,0,0.25); }
         }
     </style>
+
+    <!-- Meta Pixel preconnect (節省 DNS/TLS 100-200ms) -->
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window,document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1376021913487456');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" alt=""
+        src="https://www.facebook.com/tr?id=1376021913487456&ev=PageView&noscript=1"/></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -224,7 +244,14 @@ function buildBtns(sec) {
         const isFeatured = sec === 'sec1' && i === fi;
         const extra = isFeatured ? ' btn-featured' : (fi >= 0 && sec === 'sec1' ? ' btn-secondary' : '');
         const badge = isFeatured ? '<span class="featured-badge">⭐ 主力推薦</span>' : '';
-        return `<a class="btn-link ${cls}${extra}" href="${esc(b.url)}" target="_blank">
+        const storeMatch = (b.label || '').match(/【([^】]+)】/);
+        const store = storeMatch ? storeMatch[1] : 'unknown';
+        const channel = b.t === 'line' ? 'line_openchat' : 'fb_group';
+        return `<a class="btn-link ${cls}${extra}" href="${esc(b.url)}" target="_blank"
+            data-fb-event="Lead"
+            data-store="${esc(store)}"
+            data-channel="${channel}"
+            data-button="${esc(b.label)}">
             ${icon}<span class="btn-text">${esc(b.label)}</span>${badge}
         </a>`;
     }).join('');
@@ -295,6 +322,22 @@ function openMessenger(e, url) {
 }
 
 render();
+
+// Meta Pixel 按鈕點擊事件追蹤（fire-and-forget，不阻擋跳轉）
+document.addEventListener('click', function(e) {
+    const a = e.target.closest('[data-fb-event]');
+    if (!a) return;
+    if (typeof fbq !== 'function') return;
+    try {
+        fbq('track', a.dataset.fbEvent, {
+            button_name: a.dataset.button || '',
+            store: a.dataset.store || '',
+            channel: a.dataset.channel || '',
+            target_url: a.href || '',
+            page_url: location.href
+        });
+    } catch (err) { /* fail-safe: Pixel 異常不影響跳轉 */ }
+}, true);
 </script>
 </body>
 <!-- ts:1775960692 -->
