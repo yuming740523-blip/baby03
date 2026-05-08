@@ -329,12 +329,18 @@ document.addEventListener('click', function(e) {
     if (!a) return;
     if (typeof fbq !== 'function') return;
     try {
+        const urlParams = new URLSearchParams(location.search);
         fbq('track', a.dataset.fbEvent, {
             button_name: a.dataset.button || '',
             store: a.dataset.store || '',
             channel: a.dataset.channel || '',
             target_url: a.href || '',
-            page_url: location.href
+            page_url: location.href,
+            campaign: urlParams.get('utm_campaign') || 'organic',
+            adset_id: urlParams.get('utm_adset') || '',
+            ad_id: urlParams.get('utm_ad') || '',
+            utm_content: urlParams.get('utm_content') || '',
+            utm_term: urlParams.get('utm_term') || ''
         });
     } catch (err) { /* fail-safe: Pixel 異常不影響跳轉 */ }
 }, true);
