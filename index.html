@@ -18,7 +18,7 @@
             padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
         .container { max-width:500px; width:100%; text-align:center; padding:20px 0; }
-        .logo { width:100%; height:auto; aspect-ratio:1/1; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; }
+        .logo { width:100%; height:auto; aspect-ratio:3/2; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; cursor:zoom-in; background:#fff; }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
         .btn-link {
             display:flex; align-items:center; text-decoration:none;
@@ -82,13 +82,7 @@
             50% { box-shadow:0 6px 28px rgba(233,30,99,0.7); }
         }
 
-        /* ── Stores overview image ── */
-        .stores-image {
-            display:block; width:100%; height:auto;
-            border-radius:16px; box-shadow:0 3px 12px rgba(0,0,0,0.18);
-            margin-bottom:16px; cursor:zoom-in;
-            background:#fff;
-        }
+        /* ── Stores overview modal (click logo to zoom) ── */
         .stores-modal {
             display:none; position:fixed; inset:0;
             background:rgba(0,0,0,0.85); z-index:1000;
@@ -283,12 +277,11 @@ function buildBtns(sec) {
 
 function render() {
     document.body.style.backgroundImage = `url('${D.bg}')`;
-    const logoSrc = esc(D.logo);
-    const webpSrc = logoSrc.replace(/\.png(\?.*)?$/i, '.webp$1');
     document.getElementById('app').innerHTML = `
     <picture>
-        <source type="image/webp" srcset="${webpSrc}">
-        <img class="logo" src="${logoSrc}" alt="${esc(D.cardTitle)}" width="500" height="500" fetchpriority="high" decoding="async">
+        <source type="image/avif" srcset="images/stores.avif">
+        <source type="image/webp" srcset="images/stores.webp">
+        <img class="logo" src="images/stores.jpg" alt="${esc(D.cardTitle)} — 全台門市總覽（地址、營業時間、消費一卡通）" width="960" height="640" fetchpriority="high" decoding="async" onclick="openStoresModal()">
     </picture>
     <div class="info-card">
         <h1>${esc(D.cardTitle)}</h1>
@@ -299,11 +292,6 @@ function render() {
         <div class="notice">${nl2br(D.notice)}</div>
     </div>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
-    <picture>
-        <source type="image/avif" srcset="images/stores.avif">
-        <source type="image/webp" srcset="images/stores.webp">
-        <img class="stores-image" src="images/stores.jpg" alt="寶貝我愛你童裝 — 全台門市總覽（地址、營業時間、消費一卡通）" width="960" height="640" loading="lazy" decoding="async" onclick="openStoresModal()">
-    </picture>
     <div class="section-row"><div class="section-title">${esc(D.sec1Title)}</div></div>
     <div class="btn-list">${buildBtns('sec1')}</div>
     <div class="section-row"><div class="section-title">${esc(D.sec2Title)}</div></div>
