@@ -162,13 +162,13 @@ const DEFAULT_DATA = {
     "sec1": [
         {
             "t": "line",
-            "label": "🍴【板橋宏國店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ"
+            "label": "🍴【三重大有店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA"
         },
         {
             "t": "line",
-            "label": "🍴【三重大有店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA"
+            "label": "🍴【板橋宏國店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ"
         },
         {
             "t": "line",
@@ -220,6 +220,7 @@ const DEFAULT_DATA = {
         "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/icon_main"
     },
     "featuredStore": 0,
+    "featuredKeepBright": [1],
     "hotDeals": {
         "on": true,
         "text": "🔥 本週熱門團購 — 查看商品",
@@ -243,11 +244,13 @@ function nl2br(s) { return esc(s).replace(/\n/g,'<br>'); }
 
 function buildBtns(sec) {
     const fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
+    const keepBright = (sec === 'sec1' && Array.isArray(D.featuredKeepBright)) ? D.featuredKeepBright : [];
     return D[sec].map((b, i) => {
         const icon = b.t === 'line' ? LINE_ICON : FB_ICON;
         const cls  = b.t === 'line' ? 'btn-line' : 'btn-fb';
         const isFeatured = sec === 'sec1' && i === fi;
-        const extra = isFeatured ? ' btn-featured' : (fi >= 0 && sec === 'sec1' ? ' btn-secondary' : '');
+        const isBright = isFeatured || keepBright.includes(i);
+        const extra = isFeatured ? ' btn-featured' : (fi >= 0 && sec === 'sec1' && !isBright ? ' btn-secondary' : '');
         const badge = isFeatured ? '<span class="featured-badge">⭐ 主力推薦</span>' : '';
         const storeMatch = (b.label || '').match(/【([^】]+)】/);
         const store = storeMatch ? storeMatch[1] : 'unknown';
