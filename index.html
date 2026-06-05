@@ -236,6 +236,32 @@ const DEFAULT_DATA = {
 
 const D = DEFAULT_DATA;
 
+// ── utm → 店別分流（廣告已帶 utm_campaign=banqiao_*/sanchong_*，毋須改廣告）──
+// 讀 utm_campaign / utm_content，命中店別關鍵字 → 該店置頂+高亮、其餘淡化仍可點；不 auto-open。
+const STORE_ROUTES = [
+    { rx: /banqiao|板橋/i,  key: '板橋宏國' },
+    { rx: /sanchong|三重/i, key: '三重大有' },
+    { rx: /bade|八德/i,     key: '八德金和' },
+    { rx: /lianpu|蓮埔/i,   key: '桃園蓮埔' },
+    { rx: /zhongli|中壢/i,  key: '中壢環北' },
+    { rx: /miaoli|苗栗/i,   key: '苗栗國華' }
+];
+function routedStoreIndex() {
+    try {
+        const p = new URLSearchParams(location.search);
+        const hay = ((p.get('utm_campaign') || '') + ' ' + (p.get('utm_content') || '')).toLowerCase();
+        if (!hay.trim()) return -1;
+        for (const r of STORE_ROUTES) {
+            if (r.rx.test(hay)) {
+                const idx = (D.sec1 || []).findIndex(b => (b.label || '').includes(r.key));
+                if (idx >= 0) return idx;
+            }
+        }
+    } catch (e) {}
+    return -1;
+}
+const ROUTED_IDX = routedStoreIndex();   // -1 = 無 utm 命中 → 落回 DEFAULT_DATA.featuredStore
+
 const LINE_ICON = `<svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>`;
 const FB_ICON  = `<svg class="btn-icon icon-fb"   viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>`;
 
@@ -243,9 +269,18 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function nl2br(s) { return esc(s).replace(/\n/g,'<br>'); }
 
 function buildBtns(sec) {
-    const fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
-    const keepBright = (sec === 'sec1' && Array.isArray(D.featuredKeepBright)) ? D.featuredKeepBright : [];
-    return D[sec].map((b, i) => {
+    // utm 命中 → 對應店置頂，featured/keepBright 對準新順序第 0 位；否則落回 DEFAULT 設定
+    let items = D[sec] || [];
+    let fi, keepBright;
+    if (sec === 'sec1' && ROUTED_IDX >= 0) {
+        items = [D.sec1[ROUTED_IDX], ...D.sec1.filter((_, i) => i !== ROUTED_IDX)];
+        fi = 0;
+        keepBright = [0];
+    } else {
+        fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
+        keepBright = (sec === 'sec1' && Array.isArray(D.featuredKeepBright)) ? D.featuredKeepBright : [];
+    }
+    return items.map((b, i) => {
         const icon = b.t === 'line' ? LINE_ICON : FB_ICON;
         const cls  = b.t === 'line' ? 'btn-line' : 'btn-fb';
         const isFeatured = sec === 'sec1' && i === fi;
@@ -348,7 +383,9 @@ document.addEventListener('click', function(e) {
             adset_id: urlParams.get('utm_adset') || '',
             ad_id: urlParams.get('utm_ad') || '',
             utm_content: urlParams.get('utm_content') || '',
-            utm_term: urlParams.get('utm_term') || ''
+            utm_term: urlParams.get('utm_term') || '',
+            route_store: (ROUTED_IDX >= 0 && D.sec1[ROUTED_IDX]) ? (((D.sec1[ROUTED_IDX].label || '').match(/【([^】]+)】/) || [])[1] || '') : '',
+            route_source: ROUTED_IDX >= 0 ? 'utm' : 'default'
         });
     } catch (err) { /* fail-safe: Pixel 異常不影響跳轉 */ }
 }, true);
