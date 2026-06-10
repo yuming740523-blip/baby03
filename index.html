@@ -189,6 +189,11 @@ const DEFAULT_DATA = {
             "t": "line",
             "label": "🍴【苗栗國華店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/e1Nz6cK_jZ7Ft65-zG-VbzWX1NCgILK1WYeXVA"
+        },
+        {
+            "t": "line",
+            "label": "🍴【士林葫東店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww"
         }
     ],
     "sec2Title": "社群連結",
@@ -244,7 +249,8 @@ const STORE_ROUTES = [
     { rx: /bade|八德/i,     key: '八德金和' },
     { rx: /lianpu|蓮埔/i,   key: '桃園蓮埔' },
     { rx: /zhongli|中壢/i,  key: '中壢環北' },
-    { rx: /miaoli|苗栗/i,   key: '苗栗國華' }
+    { rx: /miaoli|苗栗/i,   key: '苗栗國華' },
+    { rx: /shilin|士林/i,   key: '士林葫東' }
 ];
 function routedStoreIndex() {
     try {
@@ -302,13 +308,8 @@ function buildBtns(sec) {
 
 function render() {
     document.body.style.backgroundImage = `url('${D.bg}')`;
-    const logoSrc = esc(D.logo);
-    const webpSrc = logoSrc.replace(/\.png(\?.*)?$/i, '.webp$1');
+    // 首頁頂部大圖 2026-06-10 業主指示移除；DATA.logo 保留，要復原把原 <picture> 區塊（webp source + img.logo）加回即可
     document.getElementById('app').innerHTML = `
-    <picture>
-        <source type="image/webp" srcset="${webpSrc}">
-        <img class="logo" src="${logoSrc}" alt="${esc(D.cardTitle)}" width="500" height="500" fetchpriority="high" decoding="async">
-    </picture>
     <div class="info-card">
         <h1>${esc(D.cardTitle)}</h1>
         <div class="subtitle">${nl2br(D.cardSubtitle)}</div>
