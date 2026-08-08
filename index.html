@@ -244,6 +244,15 @@ const D = DEFAULT_DATA;
 // ── utm → 店別分流（廣告已帶 utm_campaign=banqiao_*/sanchong_*，毋須改廣告）──
 // 讀 utm_campaign / utm_content，命中店別關鍵字 → 該店置頂+高亮、其餘淡化仍可點；不 auto-open。
 const STORE_ROUTES = [
+    // ⚠️ 例外規則必須排在通則之前（先命中先贏）
+    // 2026-08-08：士林「舊貼文社群證明測試」廣告引用 2022 年相簿貼文（2,899 讚 / 249 留言 / 183 分享）。
+    // 該貼文的行動呼籲按鈕連結被 Meta 鎖死為 utm_campaign=sanchong_1150701（7/01 三重檔期留下），
+    // 三種改法皆失敗：API 不收 call_to_action 欄位／粉專貼文不顯示該按鈕／廣告管理員回
+    // 「至少一則其他正在刊登中的廣告使用了該貼文…請為此廣告建立新貼文」。
+    // 查證：全帳號 573 支廣告無人使用此 utm 值、5 個三重 campaign 全部 PAUSED → 此值已閒置，
+    // 故在站端精準比對改導士林，避免士林客人點進來看到三重被置頂。
+    // ⛔ 若日後重啟三重且沿用 sanchong_1150701，必須先移除本行。
+    { rx: /sanchong_1150701/i, key: '士林葫東' },
     { rx: /banqiao|板橋/i,  key: '板橋宏國' },
     { rx: /sanchong|三重/i, key: '三重大有' },
     { rx: /bade|八德/i,     key: '八德金和' },
