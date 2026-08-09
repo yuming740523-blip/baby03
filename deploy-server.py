@@ -46,6 +46,24 @@ def missing_stores(current, incoming):
         if store_key(b) not in have
     ]
 
+
+def dropped_addresses(current, incoming):
+    """回傳「原本有地址、這次卻沒了」的門市 label 清單。
+
+    只管既有門市：門市整個消失由 missing_stores 負責；新門市沒地址是合法的，不擋。
+    """
+    inc = {store_key(b): b for b in (incoming.get('sec1') or [])}
+    lost = []
+    for b in (current.get('sec1') or []):
+        if not (b.get('addr') or '').strip():
+            continue
+        nb = inc.get(store_key(b))
+        if nb is None:
+            continue
+        if not (nb.get('addr') or '').strip():
+            lost.append(b.get('label') or '(無名稱)')
+    return lost
+
 class Handler(BaseHTTPRequestHandler):
 
     # ── CORS preflight ──────────────────────────────────
@@ -127,6 +145,13 @@ class Handler(BaseHTTPRequestHandler):
             self._json(409, False,
                        '拒絕部署：這次會讓現有門市消失 → ' + '、'.join(gone) +
                        '。請先在編輯器載入正式站目前資料，確認後再部署。')
+            return
+
+        lost_addr = dropped_addresses(current, data)
+        if lost_addr:
+            self._json(409, False,
+                       '拒絕部署：這次會讓既有門市的地址消失 → ' + '、'.join(lost_addr) +
+                       '。若確定要清空地址，請先在編輯器確認該欄位內容再部署。')
             return
 
         # 3. 替換 DEFAULT_DATA 區塊
