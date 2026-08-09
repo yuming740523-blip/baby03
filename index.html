@@ -40,6 +40,18 @@
         }
         .container { max-width:500px; width:100%; text-align:center; padding:20px 0; }
         .logo { width:100%; height:auto; aspect-ratio:1/1; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; }
+        /* 置頂公告：沿用 DEFAULT_DATA.notice，不另開欄位（編輯器本來就能改這句）
+           sticky 讓它捲動時黏在畫面頂端；黃底粗字是為了顯眼，但刻意不做成
+           漸層膠囊按鈕的樣子，避免客人誤以為可以點 */
+        .top-notice {
+            position:sticky; top:0; z-index:600;
+            background:linear-gradient(135deg,#FFF176,#FFD54F);
+            border:2px solid #FFA000; border-radius:14px;
+            padding:12px 16px; margin-bottom:12px;
+            font-size:15px; font-weight:700; color:#5D4037;
+            line-height:1.6; text-align:center; letter-spacing:0.3px;
+            box-shadow:0 4px 14px rgba(0,0,0,0.28);
+        }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
         /* 店名與地址上下兩行，包在膠囊內（2026-08-09 業主指定位置） */
         .btn-body { display:flex; flex-direction:column; flex:1; min-width:0; }
@@ -181,7 +193,7 @@ const DEFAULT_DATA = {
         "✅ 實體店面取貨安心"
     ],
     "noticeTitle": "📢 LINE社群公告與營業時間",
-    "notice": "加入後，點選頁面上方公告即可查看完整資訊。",
+    "notice": "📢 加入LINE社群後，請點選上方公告參考版規",
     "sec1Title": "美食團購 LINE 下單",
     "sec1": [
         {
@@ -370,6 +382,9 @@ function render() {
     // 要復原：把下面這段原樣貼回 app.innerHTML 的最前面，並把緊接的
     //         <h1 class="section-title"> 改回 <div class="section-title">
     //         （資訊卡內本來就有 h1，兩個 h1 會重複）。
+    // ⚠ 復原時還要處理：notice 目前已被獨立拿來當「置頂公告」渲染（.top-notice），
+    //   若把資訊卡整段貼回去，同一句 notice 會在頁面上出現兩次，
+    //   屆時請擇一保留（移除 .top-notice 那行，或把資訊卡內的 notice 區塊拿掉）。
     // ┌── 復原用原始片段（勿刪）─────────────────────────────────────────
     // <div class="info-card">
     //     <h1>${esc(D.cardTitle)}</h1>
@@ -385,6 +400,7 @@ function render() {
     // 走的是資料路徑：DEFAULT_DATA.hotDeals.on = false（編輯器也有 UI 可開回來），
     // 下面這行 render 邏輯保持原樣、不需改動。
     document.getElementById('app').innerHTML = `
+    ${D.notice ? `<div class="top-notice">${nl2br(D.notice)}</div>` : ''}
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
     <div class="btn-list">${buildBtns('sec1')}</div>
