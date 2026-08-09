@@ -11,6 +11,41 @@ import json, os, subprocess, threading, sys
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 PORT = 7788
 
+START = '// @@DATA_START@@\n'
+END   = '\n// @@DATA_END@@'
+
+
+def extract_data(template):
+    """從 index.html 取出目前線上的 DEFAULT_DATA。抓不到就拋例外，不回 None 讓呼叫端誤放行。"""
+    s = template.find(START)
+    e = template.find(END)
+    if s < 0 or e < 0 or e < s:
+        raise ValueError('找不到 DATA 標記')
+    blk = template[s + len(START):e]
+    a = blk.find('{')
+    b = blk.rfind('}')
+    if a < 0 or b < 0:
+        raise ValueError('DATA 區塊格式異常')
+    return json.loads(blk[a:b + 1])
+
+
+def store_key(btn):
+    """門市識別：優先用 URL（排序可合法改變，位置不能當 identity），URL 缺失才退回 label。"""
+    url = (btn.get('url') or '').strip()
+    if url:
+        return ('url', url)
+    return ('label', (btn.get('label') or '').strip())
+
+
+def missing_stores(current, incoming):
+    """回傳 current 有、incoming 沒有的門市 label 清單。"""
+    have = {store_key(b) for b in (incoming.get('sec1') or [])}
+    return [
+        (b.get('label') or '(無名稱)')
+        for b in (current.get('sec1') or [])
+        if store_key(b) not in have
+    ]
+
 class Handler(BaseHTTPRequestHandler):
 
     # ── CORS preflight ──────────────────────────────────
@@ -78,9 +113,23 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, False, f'讀取模板失敗：{e}')
             return
 
-        # 2. 替換 DEFAULT_DATA 區塊
-        START = '// @@DATA_START@@\n'
-        END   = '\n// @@DATA_END@@'
+        # 2. 安全閘門：不准讓既有門市無聲消失
+        #    2026-08-09 事故背景：editor 內建的 DEFAULT_DATA 過期（少了桃園榮華、士林葫東），
+        #    在沒有 localStorage 的機器上開編輯器按部署，會把線上 8 家直接洗成 6 家並自動 push。
+        try:
+            current = extract_data(template)
+        except Exception as ex:
+            self._json(500, False, f'讀不到 index.html 現況（{ex}），為安全起見不部署')
+            return
+
+        gone = missing_stores(current, data)
+        if gone:
+            self._json(409, False,
+                       '拒絕部署：這次會讓現有門市消失 → ' + '、'.join(gone) +
+                       '。請先在編輯器載入正式站目前資料，確認後再部署。')
+            return
+
+        # 3. 替換 DEFAULT_DATA 區塊
         s = template.find(START)
         e = template.find(END)
         if s < 0 or e < 0:
@@ -91,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
                     + f'const DEFAULT_DATA = {data_json};'
                     + template[e:])
 
-        # 3. 寫入 index.html
+        # 4. 寫入 index.html
         try:
             with open(index_path, 'w', encoding='utf-8', newline='\n') as f:
                 f.write(new_html)
@@ -99,7 +148,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, False, f'寫檔失敗：{e}')
             return
 
-        # 4. git add
+        # 5. git add
         r = subprocess.run(
             ['git', 'add', 'index.html'],
             cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
@@ -109,7 +158,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, False, f'git add 失敗：{r.stderr}')
             return
 
-        # 5. 確認是否有變更
+        # 6. 確認是否有變更
         diff = subprocess.run(
             ['git', 'diff', '--cached', '--name-only'],
             cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
@@ -119,7 +168,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, True, '內容未變更，已是最新版本')
             return
 
-        # 6. git commit
+        # 7. git commit
         r = subprocess.run(
             ['git', 'commit', '-m', 'update: content via editor'],
             cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
@@ -129,7 +178,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, False, f'git commit 失敗：{r.stderr}')
             return
 
-        # 7. git push
+        # 8. git push
         r = subprocess.run(
             ['git', 'push', 'origin', 'master'],
             cwd=REPO_DIR, capture_output=True, text=True, encoding='utf-8',
