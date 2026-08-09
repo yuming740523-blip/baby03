@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="寶貝我愛你童裝｜美食團購、童裝女裝用品 LINE 社群與 Facebook 社團入口頁，全台 6 間實體門市，支援 LINE PAY／信用卡／匯款，開立電子發票。">
+    <meta name="description" content="寶貝我愛你童裝｜美食團購、童裝女裝用品 LINE 社群與 Facebook 社團入口頁，全台 8 間實體門市，支援 LINE PAY／信用卡／匯款，開立電子發票。">
     <title>寶貝我愛你童裝 - 門市社群</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -162,6 +162,16 @@ const DEFAULT_DATA = {
     "sec1": [
         {
             "t": "line",
+            "label": "🍴【桃園榮華店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ"
+        },
+        {
+            "t": "line",
+            "label": "🍴【士林葫東店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww"
+        },
+        {
+            "t": "line",
             "label": "🍴【板橋宏國店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ"
         },
@@ -169,11 +179,6 @@ const DEFAULT_DATA = {
             "t": "line",
             "label": "🍴【三重大有店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA"
-        },
-        {
-            "t": "line",
-            "label": "🍴【士林葫東店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww"
         },
         {
             "t": "line",
@@ -225,7 +230,7 @@ const DEFAULT_DATA = {
         "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/icon_main"
     },
     "featuredStore": 0,
-    "featuredKeepBright": [1, 2],
+    "featuredKeepBright": [1, 2, 3],
     "hotDeals": {
         "on": true,
         "text": "🔥 本週熱門團購 — 查看商品",
@@ -253,6 +258,9 @@ const STORE_ROUTES = [
     // 故在站端精準比對改導士林，避免士林客人點進來看到三重被置頂。
     // ⛔ 若日後重啟三重且沿用 sanchong_1150701，必須先移除本行。
     { rx: /sanchong_1150701/i, key: '士林葫東' },
+    // 2026-08-09：桃園榮華新店。刻意不加 /taoyuan|桃園/ 通則 —— 桃園有榮華、蓮埔兩店，
+    // 通則會讓其中一店吃掉另一店的流量；廣告 utm 必須寫 ronghua 或 lianpu 才會命中。
+    { rx: /ronghua|榮華/i,  key: '桃園榮華' },
     { rx: /banqiao|板橋/i,  key: '板橋宏國' },
     { rx: /sanchong|三重/i, key: '三重大有' },
     { rx: /bade|八德/i,     key: '八德金和' },
