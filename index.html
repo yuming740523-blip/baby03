@@ -20,6 +20,9 @@
         .container { max-width:500px; width:100%; text-align:center; padding:20px 0; }
         .logo { width:100%; height:auto; aspect-ratio:1/1; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:block; margin-bottom:20px; }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
+        /* 店名與地址上下兩行，包在膠囊內（2026-08-09 業主指定位置） */
+        .btn-body { display:flex; flex-direction:column; flex:1; min-width:0; }
+        .btn-addr { font-size:12.5px; font-weight:400; color:#333; line-height:1.4; margin-top:2px; text-align:center; }
         .btn-link {
             display:flex; align-items:center; text-decoration:none;
             background:#fff; border-radius:50px; padding:16px 20px; min-height:56px;
@@ -27,7 +30,7 @@
         }
         .btn-link:active { transform:scale(0.97); background:#f5f5f5; }
         .btn-icon { width:36px; height:36px; margin-right:14px; flex-shrink:0; }
-        .btn-text { font-size:16px; font-weight:600; color:#333; text-align:left; line-height:1.4; flex:1; }
+        .btn-text { font-size:16px; font-weight:600; color:#333; text-align:left; line-height:1.4; }
         .btn-line { border-left:5px solid #06C755; }
         .btn-fb   { border-left:5px solid #1877F2; }
         .section-row {
@@ -163,42 +166,50 @@ const DEFAULT_DATA = {
         {
             "t": "line",
             "label": "🍴【桃園榮華店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ"
+            "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ",
+            "addr": "桃園區榮華街63巷23號"
         },
         {
             "t": "line",
             "label": "🍴【士林葫東店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww"
+            "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww",
+            "addr": "士林區福順里葫東街36號"
         },
         {
             "t": "line",
             "label": "🍴【板橋宏國店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ"
+            "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ",
+            "addr": "板橋區江翠里宏國路26號"
         },
         {
             "t": "line",
             "label": "🍴【三重大有店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA"
+            "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA",
+            "addr": "三重區二重里大有街1之12號（二重國小對面）"
         },
         {
             "t": "line",
             "label": "🍴【桃園蓮埔店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/5avBIMos0-baOGO7O-LdpnRh82tO0hREGqJeOQ"
+            "url": "https://line.me/ti/g2/5avBIMos0-baOGO7O-LdpnRh82tO0hREGqJeOQ",
+            "addr": "桃園區慈文里蓮埔街13號"
         },
         {
             "t": "line",
             "label": "🍴【八德金和店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w"
+            "url": "https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w",
+            "addr": "八德區大和里金和路51號"
         },
         {
             "t": "line",
             "label": "🍴【中壢環北店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/h9ECFqVTCqM_w6xKZg9Jw_E-T8h6luG8P6X3cw"
+            "url": "https://line.me/ti/g2/h9ECFqVTCqM_w6xKZg9Jw_E-T8h6luG8P6X3cw",
+            "addr": "中壢區永光里環北路90號"
         },
         {
             "t": "line",
             "label": "🍴【苗栗國華店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/e1Nz6cK_jZ7Ft65-zG-VbzWX1NCgILK1WYeXVA"
+            "url": "https://line.me/ti/g2/e1Nz6cK_jZ7Ft65-zG-VbzWX1NCgILK1WYeXVA",
+            "addr": "苗栗市文山里國華路780號"
         }
     ],
     "sec2Title": "社群連結",
@@ -230,14 +241,18 @@ const DEFAULT_DATA = {
         "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/icon_main"
     },
     "featuredStore": 0,
-    "featuredKeepBright": [1, 2, 3],
+    "featuredKeepBright": [
+        1,
+        2,
+        3
+    ],
     "hotDeals": {
-        "on": true,
+        "on": false,
         "text": "🔥 本週熱門團購 — 查看商品",
         "url": "https://www.iplusonego.com/buyer2/main/1991222734302704/store"
     },
     "widget3": {
-        "on": true,
+        "on": false,
         "text": "好市多代購",
         "url": "https://baby03.tw/costco"
     }
@@ -313,12 +328,13 @@ function buildBtns(sec) {
         const storeMatch = (b.label || '').match(/【([^】]+)】/);
         const store = storeMatch ? storeMatch[1] : 'unknown';
         const channel = b.t === 'line' ? 'line_openchat' : 'fb_group';
+        const addr = (b.addr || '').trim();
         return `<a class="btn-link ${cls}${extra}" href="${esc(b.url)}" target="_blank"
             data-fb-event="Lead"
             data-store="${esc(store)}"
             data-channel="${channel}"
             data-button="${esc(b.label)}">
-            ${icon}<span class="btn-text">${esc(b.label)}</span>${badge}
+            ${icon}<span class="btn-body"><span class="btn-text">${esc(b.label)}</span>${addr ? `<span class="btn-addr">${esc(addr)}</span>` : ''}</span>${badge}
         </a>`;
     }).join('');
 }
@@ -326,17 +342,30 @@ function buildBtns(sec) {
 function render() {
     document.body.style.backgroundImage = `url('${D.bg}')`;
     // 首頁頂部大圖 2026-06-10 業主指示移除；DATA.logo 保留，要復原把原 <picture> 區塊（webp source + img.logo）加回即可
+    //
+    // ── 白色資訊卡 2026-08-09 業主指示「暫時移除」──────────────────────────
+    // DEFAULT_DATA 的 cardTitle / cardSubtitle / serviceTitle / services /
+    // noticeTitle / notice 六個欄位都「保留未刪」，只是不渲染。
+    // 要復原：把下面這段原樣貼回 app.innerHTML 的最前面，並把緊接的
+    //         <h1 class="section-title"> 改回 <div class="section-title">
+    //         （資訊卡內本來就有 h1，兩個 h1 會重複）。
+    // ┌── 復原用原始片段（勿刪）─────────────────────────────────────────
+    // <div class="info-card">
+    //     <h1>${esc(D.cardTitle)}</h1>
+    //     <div class="subtitle">${nl2br(D.cardSubtitle)}</div>
+    //     <h2>${esc(D.serviceTitle)}</h2>
+    //     <ul>${D.services.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
+    //     <h2>${esc(D.noticeTitle)}</h2>
+    //     <div class="notice">${nl2br(D.notice)}</div>
+    // </div>
+    // └──────────────────────────────────────────────────────────────────
+    //
+    // 橘色「本週熱門團購」同日一併暫時移除，但它本來就有開關，
+    // 走的是資料路徑：DEFAULT_DATA.hotDeals.on = false（編輯器也有 UI 可開回來），
+    // 下面這行 render 邏輯保持原樣、不需改動。
     document.getElementById('app').innerHTML = `
-    <div class="info-card">
-        <h1>${esc(D.cardTitle)}</h1>
-        <div class="subtitle">${nl2br(D.cardSubtitle)}</div>
-        <h2>${esc(D.serviceTitle)}</h2>
-        <ul>${D.services.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
-        <h2>${esc(D.noticeTitle)}</h2>
-        <div class="notice">${nl2br(D.notice)}</div>
-    </div>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
-    <div class="section-row"><div class="section-title">${esc(D.sec1Title)}</div></div>
+    <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
     <div class="btn-list">${buildBtns('sec1')}</div>
     <div class="section-row"><div class="section-title">${esc(D.sec2Title)}</div></div>
     <div class="btn-list">${buildBtns('sec2')}</div>`;
