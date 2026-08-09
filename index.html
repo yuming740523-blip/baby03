@@ -18,14 +18,15 @@
     <meta property="og:url" content="https://baby03.tw/">
     <meta property="og:title" content="寶貝我愛你童裝｜美食團購 LINE 下單">
     <meta property="og:description" content="全台 8 間門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
-    <meta property="og:image" content="https://baby03.tw/images/logo.png">
-    <meta property="og:image:width" content="500">
-    <meta property="og:image:height" content="500">
-    <meta property="og:image:alt" content="寶貝我愛你童裝 logo">
-    <meta name="twitter:card" content="summary">
+    <!-- og-image 由店面招牌完稿重新構圖而成（1200x630），已移除 QR、板橋宏國店字樣與 FB 條 -->
+    <meta property="og:image" content="https://baby03.tw/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="寶貝團購｜美食團購 LINE 下單">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="寶貝我愛你童裝｜美食團購 LINE 下單">
     <meta name="twitter:description" content="全台 8 間門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
-    <meta name="twitter:image" content="https://baby03.tw/images/logo.png">
+    <meta name="twitter:image" content="https://baby03.tw/images/og-image.jpg">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
@@ -51,6 +52,13 @@
             font-size:15px; font-weight:700; color:#5D4037;
             line-height:1.6; text-align:center; letter-spacing:0.3px;
             box-shadow:0 4px 14px rgba(0,0,0,0.28);
+        }
+        /* 品牌頭圖：由店面招牌完稿裁出（已去除 QR、板橋宏國店字樣、FB 藍條）
+           首頁唯一的 <img>，也是 LCP 元素，故不 lazy、給 fetchpriority=high，
+           並用 width/height 佔位避免 CLS */
+        .brand-hero {
+            display:block; width:100%; height:auto; border-radius:16px;
+            margin-bottom:14px; box-shadow:0 3px 12px rgba(0,0,0,0.22);
         }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
         /* 店名與地址上下兩行，包在膠囊內（2026-08-09 業主指定位置） */
@@ -401,6 +409,11 @@ function render() {
     // 下面這行 render 邏輯保持原樣、不需改動。
     document.getElementById('app').innerHTML = `
     ${D.notice ? `<div class="top-notice">${nl2br(D.notice)}</div>` : ''}
+    <picture>
+        <source srcset="images/brand-hero.webp" type="image/webp">
+        <img class="brand-hero" src="images/brand-hero.jpg" width="1200" height="449"
+             alt="寶貝團購" fetchpriority="high" decoding="async">
+    </picture>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
     <div class="btn-list">${buildBtns('sec1')}</div>
