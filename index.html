@@ -32,7 +32,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "PingFang TC", sans-serif;
             min-height: 100vh;
-            background: url('images/bg.jpg') no-repeat center center fixed;
+            /* 2026-08-11 效能：background-attachment:fixed 在手機捲動時每一幀都要重畫滿版背景，
+               成本高又常見閃爍，改成只有桌機才 fixed（手機視覺差異極小）。 */
+            background: url('images/bg.jpg') no-repeat center center scroll;
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -61,15 +63,65 @@
             margin-bottom:14px; box-shadow:0 3px 12px rgba(0,0,0,0.22);
         }
         .btn-list { display:flex; flex-direction:column; gap:12px; }
-        /* 店名與地址上下兩行，包在膠囊內（2026-08-09 業主指定位置） */
-        .btn-body { display:flex; flex-direction:column; flex:1; min-width:0; }
-        .btn-addr { font-size:12.5px; font-weight:400; color:#333; line-height:1.4; margin-top:2px; text-align:center; }
+        /* 店名與地址上下兩行，包在膠囊內（2026-08-09 業主指定位置）
+           2026-08-11：地址要能開地圖，但 <a> 裡不能再放 <a>（非法 HTML），
+           且第一版把「整條地址」做成連結後實測會誤點 —— 地址熱區只有 18px 高、298px 寬，
+           上下左右緊貼 LINE 熱區、零緩衝（iOS 建議 44x44）。想點地圖點到 LINE、想點 LINE 點到地址。
+           改法：地址文字改成「不可點」，地圖入口收斂成右側一顆 44x44 有邊界的按鈕。
+             .btn-hit  絕對定位鋪滿整顆膠囊 = 進 LINE 的熱區（Lead 掛這裡）
+             .btn-body pointer-events:none → 店名與地址的點擊一律穿透給 LINE
+             .btn-map  pointer-events:auto + z-index 3 = 唯一會開地圖的地方
+           結果：地圖熱區從 18px 高變成 44x44，LINE 的可點面積反而比上一版更大。 */
+        .btn-body { position:relative; z-index:2; pointer-events:none;
+                    display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
+        .btn-hit { position:absolute; inset:0; z-index:1; border-radius:inherit; }
+        .btn-meta { display:grid; grid-template-columns:minmax(0,1fr) 44px;
+                    column-gap:8px; align-items:center; min-height:44px; }
+        .btn-addr-text {
+            font-size:12.5px; font-weight:400; color:#333; line-height:1.35;
+            text-align:center; overflow-wrap:anywhere;   /* 置中：沿用 2026-08-09 業主指定 */
+        }
+        /* 距離是定位後才填入的，未定位時這個 span 是空的，不佔版面 */
+        .btn-distance { color:#c2185b; font-weight:700; white-space:nowrap; }
+        .btn-map {
+            pointer-events:auto; position:relative; z-index:3;
+            width:44px; height:44px; border-radius:999px;
+            display:inline-flex; align-items:center; justify-content:center;
+            border:1px solid rgba(22,101,52,0.28); background:rgba(240,253,244,0.92);
+            color:#166534; font-size:12px; font-weight:700; line-height:1;
+            text-decoration:none; touch-action:manipulation;
+        }
+        .btn-map:active { background:#dcf5e3; transform:scale(0.94); }
+        /* 鍵盤操作要看得到焦點（LINE 覆蓋層本身沒有文字） */
+        .btn-hit:focus-visible, .btn-map:focus-visible { outline:3px solid #1a73e8; outline-offset:2px; }
+        @media (max-width:360px) {
+            .btn-link { padding:14px 14px; }
+            .btn-icon { width:32px; height:32px; margin-right:10px; }
+            .btn-text { font-size:15px; }
+            .btn-meta { column-gap:6px; }
+        }
+        /* 定位按鈕：刻意做得比 LINE 膠囊低調，主 CTA 仍是加入社群 */
+        .geo-row { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:12px; }
+        .geo-btn {
+            font-family:inherit; font-size:13.5px; font-weight:600; color:#333;
+            background:rgba(255,255,255,0.92); border:none; border-radius:50px;
+            padding:9px 18px; cursor:pointer;
+            box-shadow:0 2px 8px rgba(0,0,0,0.18);
+        }
+        .geo-btn:active { transform:scale(0.97); }
+        .geo-btn:disabled { opacity:0.6; cursor:default; }
+        /* 狀態文字會壓在淺色背景圖上，純白字不夠清楚 → 給深色小膠囊；沒有訊息時整個不顯示 */
+        .geo-status { font-size:12.5px; color:#fff; background:rgba(0,0,0,0.45); border-radius:50px; padding:3px 12px; }
+        .geo-status:empty { display:none; }
         .btn-link {
+            position:relative;
             display:flex; align-items:center; text-decoration:none;
             background:#fff; border-radius:50px; padding:16px 20px; min-height:56px;
             box-shadow:0 3px 10px rgba(0,0,0,0.15); transition:transform 0.15s,box-shadow 0.15s;
         }
-        .btn-link:active { transform:scale(0.97); background:#f5f5f5; }
+        /* 膠囊本體已改成 div，按壓動畫要跟著覆蓋層的 :active 走；
+           舊瀏覽器不支援 :has() 時只是少了按壓動畫，功能不受影響 */
+        .btn-link:has(.btn-hit:active) { transform:scale(0.97); background:#f5f5f5; }
         .btn-icon { width:36px; height:36px; margin-right:14px; flex-shrink:0; }
         .btn-text { font-size:16px; font-weight:600; color:#333; text-align:left; line-height:1.4; }
         .btn-line { border-left:5px solid #06C755; }
@@ -103,6 +155,9 @@
             border-left-width:6px !important;
         }
         .featured-badge {
+            /* 徽章有一半凸出膠囊上緣，那一塊不在 .btn-hit 的覆蓋範圍內；
+               不設 pointer-events:none 的話，點到徽章會變成沒反應的死角 */
+            pointer-events:none;
             position:absolute; top:-9px; right:12px;
             background:linear-gradient(135deg,#ff6b9d,#e91e63);
             color:#fff; font-size:11px; font-weight:700;
@@ -156,6 +211,9 @@
         }
         .float-btn.costco:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(228,0,43,0.6); }
 
+        @media(min-width:769px){
+            body { background-attachment:fixed; }
+        }
         @media(min-width:600px){
             body { padding:30px 20px; }
             .btn-link:hover { transform:translateY(-2px); box-shadow:0 5px 20px rgba(0,0,0,0.25); }
@@ -208,49 +266,65 @@ const DEFAULT_DATA = {
             "t": "line",
             "label": "🍴【桃園榮華店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ",
-            "addr": "桃園區榮華街63巷23號"
+            "addr": "桃園區榮華街63巷23號",
+            "lat": 24.974607,
+            "lng": 121.3209675
         },
         {
             "t": "line",
             "label": "🍴【士林葫東店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/Tt_5XfBhwmjuq0iBXhpqTVFB8rptnVfDsKRNww",
-            "addr": "士林區福順里葫東街36號"
+            "addr": "士林區福順里葫東街36號",
+            "lat": 25.0836118,
+            "lng": 121.5113244
         },
         {
             "t": "line",
             "label": "🍴【板橋宏國店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ",
-            "addr": "板橋區江翠里宏國路26號"
+            "addr": "板橋區江翠里宏國路26號",
+            "lat": 25.0316286,
+            "lng": 121.4683397
         },
         {
             "t": "line",
             "label": "🍴【三重大有店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/gqLOYVry2dPkJ2D7MweEeJrATXmpEzYEUhZ2oA",
-            "addr": "三重區二重里大有街1之12號（二重國小對面）"
+            "addr": "三重區二重里大有街1之12號（二重國小對面）",
+            "lat": 25.066132,
+            "lng": 121.4773289
         },
         {
             "t": "line",
             "label": "🍴【桃園蓮埔店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/5avBIMos0-baOGO7O-LdpnRh82tO0hREGqJeOQ",
-            "addr": "桃園區慈文里蓮埔街13號"
+            "addr": "桃園區慈文里蓮埔街13號",
+            "lat": 25.0054345,
+            "lng": 121.297839
         },
         {
             "t": "line",
             "label": "🍴【八德金和店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w",
-            "addr": "八德區大和里金和路51號"
+            "addr": "八德區大和里金和路51號",
+            "lat": 24.954951,
+            "lng": 121.2970206
         },
         {
             "t": "line",
             "label": "🍴【中壢環北店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/h9ECFqVTCqM_w6xKZg9Jw_E-T8h6luG8P6X3cw",
-            "addr": "中壢區永光里環北路90號"
+            "addr": "中壢區永光里環北路90號",
+            "lat": 24.965994,
+            "lng": 121.219008
         },
         {
             "t": "line",
             "label": "🍴【苗栗國華店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/e1Nz6cK_jZ7Ft65-zG-VbzWX1NCgILK1WYeXVA",
-            "addr": "苗栗市文山里國華路780號"
+            "addr": "苗栗市文山里國華路780號",
+            "lat": 24.5718236,
+            "lng": 120.8146227
         }
     ],
     "sec2Title": "社群連結",
@@ -364,19 +438,39 @@ function buildBtns(sec) {
         const cls  = b.t === 'line' ? 'btn-line' : 'btn-fb';
         const isFeatured = sec === 'sec1' && i === fi;
         const isBright = isFeatured || keepBright.includes(i);
-        const extra = isFeatured ? ' btn-featured' : (fi >= 0 && sec === 'sec1' && !isBright ? ' btn-secondary' : '');
+        const isDim = fi >= 0 && sec === 'sec1' && !isBright;
+        const extra = isFeatured ? ' btn-featured' : (isDim ? ' btn-secondary' : '');
         const badge = isFeatured ? '<span class="featured-badge">⭐ 主力推薦</span>' : '';
         const storeMatch = (b.label || '').match(/【([^】]+)】/);
         const store = storeMatch ? storeMatch[1] : 'unknown';
         const channel = b.t === 'line' ? 'line_openchat' : 'fb_group';
         const addr = (b.addr || '').trim();
-        return `<a class="btn-link ${cls}${extra}" href="${esc(b.url)}" target="_blank"
+        // 有座標就用座標開地圖（門牌最準）；沒有就退回地址字串讓 Google 自己找。
+        // 例：三重店地址寫「大有街1之12號」，Google 會解析成 1之35號，差一個門牌 —— 所以座標優先。
+        const hasGeo = typeof b.lat === 'number' && typeof b.lng === 'number';
+        const mapQuery = hasGeo ? `${b.lat},${b.lng}` : addr;
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+        const geoAttr = hasGeo ? ` data-lat="${b.lat}" data-lng="${b.lng}"` : '';
+        // 地址文字是純文字（不可點），只有右邊那顆 .btn-map 會開地圖。
+        // data-map-link 是給 Pixel 監聽用的排除標記，不可拿掉（見檔尾 click listener）
+        const mapLine = addr ? `<span class="btn-meta">
+                <span class="btn-addr-text">📍${esc(addr)}<span class="btn-distance"${geoAttr}></span></span>
+                <a class="btn-map" href="${esc(mapUrl)}" target="_blank" rel="noopener"
+                   aria-label="在地圖開啟 ${esc(store)}：${esc(addr)}"
+                   data-map-link="1"
+                   data-store="${esc(store)}">地圖</a>
+            </span>` : '';
+        // data-fb-event 只掛在 .btn-hit，不可往外層搬 —— 搬到 .btn-link 上，
+        // 地址連結的 closest('[data-fb-event]') 就會命中外層，地圖點擊又會被算成 Lead。
+        return `<div class="btn-link ${cls}${extra}">
+            <a class="btn-hit" href="${esc(b.url)}" target="_blank"
+            aria-label="${esc(b.label)}"
             data-fb-event="Lead"
             data-store="${esc(store)}"
             data-channel="${channel}"
-            data-button="${esc(b.label)}">
-            ${icon}<span class="btn-body"><span class="btn-text">${esc(b.label)}</span>${addr ? `<span class="btn-addr">${esc(addr)}</span>` : ''}</span>${badge}
-        </a>`;
+            data-button="${esc(b.label)}"></a>
+            ${icon}<span class="btn-body"><span class="btn-text">${esc(b.label)}</span>${mapLine}</span>${badge}
+        </div>`;
     }).join('');
 }
 
@@ -410,12 +504,21 @@ function render() {
     document.getElementById('app').innerHTML = `
     ${D.notice ? `<div class="top-notice">${nl2br(D.notice)}</div>` : ''}
     <picture>
-        <source srcset="images/brand-hero.webp" type="image/webp">
+        <!-- 2026-08-11 效能：頭圖是 LCP 元素。版面最寬 500px（.container），手機是 100vw-24px，
+             原本不管螢幕多小都下載 1200w/42KB。改給 600/900/1200 三檔讓瀏覽器依螢幕與 DPR 挑，
+             低 DPR 手機省 24KB。fetchpriority=high / 不 lazy / width-height 佔位一律保留，不可拿掉。 -->
+        <source type="image/webp"
+                srcset="images/brand-hero-600.webp 600w, images/brand-hero-900.webp 900w, images/brand-hero.webp 1200w"
+                sizes="(max-width:524px) calc(100vw - 24px), 500px">
         <img class="brand-hero" src="images/brand-hero.jpg" width="1200" height="449"
              alt="寶貝團購" fetchpriority="high" decoding="async">
     </picture>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
+    <div class="geo-row">
+        <button type="button" id="locateBtn" class="geo-btn">📍 顯示各店離我多遠</button>
+        <span id="geoStatus" class="geo-status" aria-live="polite"></span>
+    </div>
     <div class="btn-list">${buildBtns('sec1')}</div>
     <div class="section-row"><div class="section-title">${esc(D.sec2Title)}</div></div>
     <div class="btn-list">${buildBtns('sec2')}</div>`;
@@ -461,10 +564,94 @@ function openMessenger(e, url) {
     return false;
 }
 
+// ── 距離顯示（2026-08-11 試做）────────────────────────────────────────
+// 只做「直線距離」：站上沒有路線 API，也刻意不接（靜態頁放 API key 有風險）。
+// 文案一律標「直線」，不可寫成車程或路線距離。
+// 距離只是資訊，不動排序 —— 置頂/⭐主力推薦是業主指定的商業規則（utm 分流 + featuredStore）。
+function haversineKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+function formatDistance(km) {
+    if (!isFinite(km) || km < 0) return '';
+    if (km < 0.1) return '約 100m 內';
+    if (km < 1) {
+        const m = Math.round(km * 10) * 100;
+        // 0.96km 這種會被進位成 1000m，改用公里表示，不要出現「約 1000m」
+        return m >= 1000 ? '約 1.0km' : `約 ${m}m`;
+    }
+    if (km < 10) {
+        const one = km.toFixed(1);
+        // 9.96 會被 toFixed 進位成 10.0，和 10km 以上的整數格式不一致 → 交給下面的整數分支
+        if (one !== '10.0') return `約 ${one}km`;
+    }
+    return `約 ${Math.round(km)}km`;
+}
+
+// 只更新距離文字；沒有 lat/lng 的門市（例如日後用編輯器新增的店）就保持空白，不影響地圖按鈕
+function renderDistances(lat, lng) {
+    let n = 0;
+    document.querySelectorAll('.btn-distance[data-lat][data-lng]').forEach(function(box) {
+        const sLat = parseFloat(box.dataset.lat);
+        const sLng = parseFloat(box.dataset.lng);
+        if (!isFinite(sLat) || !isFinite(sLng)) return;
+        const txt = formatDistance(haversineKm(lat, lng, sLat, sLng));
+        if (!txt) return;
+        box.textContent = ` · 直線${txt}`;
+        n++;
+    });
+    return n;
+}
+
+// 一律由使用者按按鈕才定位。落地頁一進站就跳系統權限對話框會嚇跑客人，直接影響加入社群的轉換。
+function initGeo() {
+    const btn = document.getElementById('locateBtn');
+    const st  = document.getElementById('geoStatus');
+    if (!btn || !st) return;
+    btn.addEventListener('click', function() {
+        if (!navigator.geolocation) { st.textContent = '此瀏覽器不支援定位，仍可點地址開啟地圖'; return; }
+        btn.disabled = true;
+        st.textContent = '定位中…';
+        let settled = false;
+        // 看門狗：getCurrentPosition 的 timeout 依規格「不包含等待使用者授權的時間」，
+        // 實測 Chrome 在權限對話框沒被回答時，8 秒 timeout 永遠不會觸發 →
+        // 按鈕會一直卡在 disabled + 「定位中…」。這支計時器只負責把介面解鎖，
+        // 不取消底下那個請求（使用者稍後才按允許的話，距離仍然會補上）。
+        const watchdog = setTimeout(function() {
+            if (settled) return;
+            btn.disabled = false;
+            st.textContent = '還在等定位授權，可先點地址開啟地圖';
+        }, 12000);
+        const finish = function(text) {
+            settled = true;
+            clearTimeout(watchdog);
+            btn.disabled = false;
+            st.textContent = text;
+        };
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            const n = renderDistances(pos.coords.latitude, pos.coords.longitude);
+            finish(n > 0 ? '已顯示直線距離（非車程）' : '目前沒有可計算距離的門市');
+        }, function() {
+            // 拒絕授權／逾時／非 HTTPS 都走這裡，頁面其餘功能不受影響
+            finish('無法取得定位，仍可點地址開啟地圖');
+        }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
+    });
+}
+
 render();
+initGeo();
 
 // Meta Pixel 按鈕點擊事件追蹤（fire-and-forget，不阻擋跳轉）
 document.addEventListener('click', function(e) {
+    // 地圖連結不是轉換：地址現在是 .btn-link 的兄弟節點，本來就不會被 closest 抓到，
+    // 這行是第二道保險，避免日後有人把地址搬回膠囊裡就無聲灌水 Lead。
+    if (e.target.closest('[data-map-link]')) return;
     const a = e.target.closest('[data-fb-event]');
     if (!a) return;
     if (typeof fbq !== 'function') return;
