@@ -34,7 +34,10 @@
             min-height: 100vh;
             /* 2026-08-11 效能：background-attachment:fixed 在手機捲動時每一幀都要重畫滿版背景，
                成本高又常見閃爍，改成只有桌機才 fixed（手機視覺差異極小）。 */
-            background: url('images/bg.jpg') no-repeat center center scroll;
+            /* 檔名帶日期是為了繞過 CDN 快取：bg.jpg 重壓後 URL 沒變，
+               Cloudflare 邊緣那份舊的 139KB 會繼續服務到過期為止（實測 Age 已 15 小時）。
+               換圖時請一併換檔名與下面 DEFAULT_DATA.bg，不要原地覆蓋同一個檔名。 */
+            background: url('images/bg-20260811.jpg') no-repeat center center scroll;
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -248,7 +251,7 @@
 // @@DATA_START@@
 const DEFAULT_DATA = {
     "logo": "images/logo.png",
-    "bg": "images/bg.jpg",
+    "bg": "images/bg-20260811.jpg",
     "cardTitle": "寶貝團購｜美食・童裝",
     "cardSubtitle": "臉書社團及LINE社群皆可快速下單！",
     "serviceTitle": "📌 我們的服務與保證",
