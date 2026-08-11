@@ -615,7 +615,7 @@ function initGeo() {
     const st  = document.getElementById('geoStatus');
     if (!btn || !st) return;
     btn.addEventListener('click', function() {
-        if (!navigator.geolocation) { st.textContent = '此瀏覽器不支援定位，仍可點地址開啟地圖'; return; }
+        if (!navigator.geolocation) { st.textContent = '此瀏覽器不支援定位，仍可點「地圖」按鈕'; return; }
         btn.disabled = true;
         st.textContent = '定位中…';
         let settled = false;
@@ -626,7 +626,7 @@ function initGeo() {
         const watchdog = setTimeout(function() {
             if (settled) return;
             btn.disabled = false;
-            st.textContent = '還在等定位授權，可先點地址開啟地圖';
+            st.textContent = '還在等定位授權，可先點「地圖」按鈕';
         }, 12000);
         const finish = function(text) {
             settled = true;
@@ -639,7 +639,7 @@ function initGeo() {
             finish(n > 0 ? '已顯示直線距離（非車程）' : '目前沒有可計算距離的門市');
         }, function() {
             // 拒絕授權／逾時／非 HTTPS 都走這裡，頁面其餘功能不受影響
-            finish('無法取得定位，仍可點地址開啟地圖');
+            finish('無法取得定位，仍可點「地圖」按鈕');
         }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
     });
 }
@@ -649,8 +649,9 @@ initGeo();
 
 // Meta Pixel 按鈕點擊事件追蹤（fire-and-forget，不阻擋跳轉）
 document.addEventListener('click', function(e) {
-    // 地圖連結不是轉換：地址現在是 .btn-link 的兄弟節點，本來就不會被 closest 抓到，
-    // 這行是第二道保險，避免日後有人把地址搬回膠囊裡就無聲灌水 Lead。
+    // 地圖按鈕不是轉換：.btn-map 與帶 data-fb-event 的 .btn-hit 是兄弟節點，
+    // 本來就不會被 closest 抓到；這行是第二道保險，
+    // 避免日後有人把 data-fb-event 搬到外層膠囊就無聲灌水 Lead。
     if (e.target.closest('[data-map-link]')) return;
     const a = e.target.closest('[data-fb-event]');
     if (!a) return;
