@@ -516,7 +516,7 @@ function render() {
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
     <div class="geo-row">
-        <button type="button" id="locateBtn" class="geo-btn">📍 顯示各店離我多遠</button>
+        <button type="button" id="locateBtn" class="geo-btn">📍 點擊顯示離我多遠</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
     <div class="btn-list">${buildBtns('sec1')}</div>
