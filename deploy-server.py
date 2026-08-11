@@ -64,6 +64,35 @@ def dropped_addresses(current, incoming):
             lost.append(b.get('label') or '(無名稱)')
     return lost
 
+def _coord(v):
+    """回傳合法經緯度數值，否則 None。bool 是 int 的子類別，必須排除。"""
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    return float(v)
+
+
+def dropped_coords(current, incoming):
+    """回傳「原本有座標、這次卻沒了」的門市 label 清單。
+
+    2026-08-11 加：編輯器載入時是用 canonical 的 top-level key 去補 localStorage 草稿，
+    只要那台機器留著 8/11 之前的舊 sec1 草稿，整段 sec1 會勝出、8 筆 lat/lng 被無聲洗掉，
+    而上面兩道閘門只看得到「門市消失」與「地址消失」，擋不住座標消失。
+    座標沒了 = 首頁的距離顯示整個消失，和 8/09 的地址漂移是同一類事故。
+    新門市沒座標是合法的（編輯器沒有座標欄位），只擋既有門市。
+    """
+    inc = {store_key(b): b for b in (incoming.get('sec1') or [])}
+    lost = []
+    for b in (current.get('sec1') or []):
+        if _coord(b.get('lat')) is None or _coord(b.get('lng')) is None:
+            continue
+        nb = inc.get(store_key(b))
+        if nb is None:
+            continue
+        if _coord(nb.get('lat')) is None or _coord(nb.get('lng')) is None:
+            lost.append(b.get('label') or '(無名稱)')
+    return lost
+
+
 class Handler(BaseHTTPRequestHandler):
 
     # ── CORS preflight ──────────────────────────────────
@@ -152,6 +181,14 @@ class Handler(BaseHTTPRequestHandler):
             self._json(409, False,
                        '拒絕部署：這次會讓既有門市的地址消失 → ' + '、'.join(lost_addr) +
                        '。若確定要清空地址，請先在編輯器確認該欄位內容再部署。')
+            return
+
+        lost_geo = dropped_coords(current, data)
+        if lost_geo:
+            self._json(409, False,
+                       '拒絕部署：這次會讓既有門市的座標（lat/lng）消失 → ' + '、'.join(lost_geo) +
+                       '。首頁的「離我多遠」會因此失效。多半是編輯器讀到舊的 localStorage 草稿，'
+                       '請先清掉瀏覽器暫存草稿、重新載入正式站資料後再部署。')
             return
 
         # 3. 替換 DEFAULT_DATA 區塊
