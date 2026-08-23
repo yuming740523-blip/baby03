@@ -418,6 +418,27 @@ function routedStoreIndex() {
 }
 const ROUTED_IDX = routedStoreIndex();   // -1 = 無 utm 命中 → 落回 DEFAULT_DATA.featuredStore
 
+// ── 分店專屬【美食團購】FB 社團（2026-08-22 業主指定）──────────────────
+// 只有這兩店有自己的社團；其餘門市與無 utm 的自然流量一律不覆寫 = 用 DATA 裡的共用社團。
+// store 欄位要跟 sec1 label 的【】內文字一致，Pixel 的 store 才不會一邊寫【士林葫東店】一邊寫【美食團購】。
+const STORE_FB_GROUPS = {
+    '士林葫東': { store: '士林葫東店', url: 'https://www.facebook.com/groups/980998417913637' },
+    '桃園榮華': { store: '桃園榮華店', url: 'https://www.facebook.com/groups/1360732452112600' }
+};
+// 刻意不從 ROUTED_IDX 反推：那是 sec1 的陣列位置，若日後某店從 sec1 拿掉，社團分流會跟著失效。
+function routedStoreKey() {
+    try {
+        const p = new URLSearchParams(location.search);
+        const hay = ((p.get('utm_campaign') || '') + ' ' + (p.get('utm_content') || '')).toLowerCase();
+        if (!hay.trim()) return '';
+        for (const r of STORE_ROUTES) {
+            if (r.rx.test(hay)) return r.key;
+        }
+    } catch (e) {}
+    return '';
+}
+const ROUTED_KEY = routedStoreKey();     // '' = 無命中 → 社團按鈕維持 DATA 原值
+
 const LINE_ICON = `<svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>`;
 const FB_ICON  = `<svg class="btn-icon icon-fb"   viewBox="0 0 32 32" fill="white"><path d="M29 16C29 8.82 23.18 3 16 3S3 8.82 3 16c0 6.49 4.75 11.87 10.97 12.84v-9.08h-3.3V16h3.3v-2.87c0-3.26 1.94-5.06 4.91-5.06 1.42 0 2.91.25 2.91.25v3.2h-1.64c-1.61 0-2.12 1-2.12 2.03V16h3.61l-.58 3.76h-3.03v9.08C24.25 27.87 29 22.49 29 16z"/></svg>`;
 
@@ -435,6 +456,15 @@ function buildBtns(sec) {
     } else {
         fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
         keepBright = (sec === 'sec1' && Array.isArray(D.featuredKeepBright)) ? D.featuredKeepBright : [];
+    }
+    // sec2 的【美食團購】FB 社團：utm 命中士林/榮華 → 換成該店專屬社團（按鈕文字一起換，訪客才知道進的是哪店）。
+    // ❗ 必須同時比 t==='fb' 與 label 含「美食團購」—— sec2 有兩顆 FB，
+    //    只看 t==='fb' 會把【童裝女裝用品】臉書社團（全站共用）一起改掉。
+    const fbGroup = (sec === 'sec2') ? STORE_FB_GROUPS[ROUTED_KEY] : null;
+    if (fbGroup) {
+        items = items.map(b => (b && b.t === 'fb' && (b.label || '').includes('美食團購'))
+            ? { ...b, url: fbGroup.url, label: '🍴【' + fbGroup.store + '】美食團購臉書社團' }
+            : b);
     }
     return items.map((b, i) => {
         const icon = b.t === 'line' ? LINE_ICON : FB_ICON;
