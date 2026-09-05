@@ -7,7 +7,7 @@
          2026-08-09 資訊卡（服務保證／營業時間）暫時移除後，原本描述裡的
          「支援 LINE PAY／信用卡／匯款，開立電子發票」在頁面上已不存在，
          留著會造成搜尋結果與實際內容不符，故一併更新。資訊卡若復原，這裡要改回來。 -->
-    <meta name="description" content="寶貝我愛你童裝｜全台 8 間門市美食團購 LINE 社群入口，附各店地址。另有童裝女裝用品 LINE 社群與 Facebook 社團，點選即可加入下單。">
+    <meta name="description" content="寶貝我愛你童裝｜全台門市美食團購 LINE 社群入口，附各店地址。另有童裝女裝用品 LINE 社群與 Facebook 社團，點選即可加入下單。">
     <title>寶貝我愛你童裝｜美食團購 LINE 下單</title>
 
     <!-- Open Graph／Twitter Card：本頁主要靠 LINE 分享與 FB 廣告貼文傳播，
@@ -17,7 +17,7 @@
     <meta property="og:locale" content="zh_TW">
     <meta property="og:url" content="https://baby03.tw/">
     <meta property="og:title" content="寶貝我愛你童裝｜美食團購 LINE 下單">
-    <meta property="og:description" content="全台 8 間門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
+    <meta property="og:description" content="全台門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
     <!-- og-image 由店面招牌完稿重新構圖而成（1200x630），已移除 QR、板橋宏國店字樣與 FB 條 -->
     <meta property="og:image" content="https://baby03.tw/images/og-image.jpg">
     <meta property="og:image:width" content="1200">
@@ -25,7 +25,7 @@
     <meta property="og:image:alt" content="寶貝團購｜美食團購 LINE 下單">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="寶貝我愛你童裝｜美食團購 LINE 下單">
-    <meta name="twitter:description" content="全台 8 間門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
+    <meta name="twitter:description" content="全台門市美食團購 LINE 社群入口，附各店地址。點選門市即可加入社群跟團下單。">
     <meta name="twitter:image" content="https://baby03.tw/images/og-image.jpg">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -328,6 +328,12 @@ const DEFAULT_DATA = {
             "addr": "苗栗市文山里國華路780號",
             "lat": 24.5718236,
             "lng": 120.8146227
+        },
+        {
+            "t": "line",
+            "label": "🍴【內湖店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/jIg6bJdGUjUsI0ghx-0FdAkhe6AF-NduUSCtgQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
+            "addr": "台北市內湖區內湖路一段629巷36弄2號"
         }
     ],
     "sec2Title": "社群連結",
@@ -394,6 +400,7 @@ const STORE_ROUTES = [
     // 2026-08-09：桃園榮華新店。刻意不加 /taoyuan|桃園/ 通則 —— 桃園有榮華、蓮埔兩店，
     // 通則會讓其中一店吃掉另一店的流量；廣告 utm 必須寫 ronghua 或 lianpu 才會命中。
     { rx: /ronghua|榮華/i,  key: '桃園榮華' },
+    { rx: /neihu|內湖/i,    key: '內湖' },
     { rx: /banqiao|板橋/i,  key: '板橋宏國' },
     { rx: /sanchong|三重/i, key: '三重大有' },
     { rx: /bade|八德/i,     key: '八德金和' },
@@ -419,11 +426,12 @@ function routedStoreIndex() {
 const ROUTED_IDX = routedStoreIndex();   // -1 = 無 utm 命中 → 落回 DEFAULT_DATA.featuredStore
 
 // ── 分店專屬【美食團購】FB 社團（2026-08-22 業主指定）──────────────────
-// 只有這兩店有自己的社團；其餘門市與無 utm 的自然流量一律不覆寫 = 用 DATA 裡的共用社團。
+// 只有這三店有自己的社團；其餘門市與無 utm 的自然流量一律不覆寫 = 用 DATA 裡的共用社團。
 // store 欄位要跟 sec1 label 的【】內文字一致，Pixel 的 store 才不會一邊寫【士林葫東店】一邊寫【美食團購】。
 const STORE_FB_GROUPS = {
     '士林葫東': { store: '士林葫東店', url: 'https://www.facebook.com/groups/980998417913637' },
-    '桃園榮華': { store: '桃園榮華店', url: 'https://www.facebook.com/groups/1360732452112600' }
+    '桃園榮華': { store: '桃園榮華店', url: 'https://www.facebook.com/groups/1360732452112600' },
+    '內湖': { store: '內湖店', url: 'https://www.facebook.com/groups/1569798504694646' }
 };
 // 刻意不從 ROUTED_IDX 反推：那是 sec1 的陣列位置，若日後某店從 sec1 拿掉，社團分流會跟著失效。
 function routedStoreKey() {
@@ -449,7 +457,15 @@ function buildBtns(sec) {
     // utm 命中 → 對應店置頂，featured/keepBright 對準新順序第 0 位；否則落回 DEFAULT 設定
     let items = D[sec] || [];
     let fi, keepBright;
-    if (sec === 'sec1' && ROUTED_IDX >= 0) {
+    if (sec === 'sec1' && ROUTED_KEY === '內湖') {
+        const rank = ['內湖', '士林葫東', '桃園榮華'];
+        items = [
+            ...rank.map(k => D.sec1.find(b => (b.label || '').includes(k))).filter(Boolean),
+            ...D.sec1.filter(b => !rank.some(k => (b.label || '').includes(k)))
+        ];
+        fi = 0;
+        keepBright = [0];
+    } else if (sec === 'sec1' && ROUTED_IDX >= 0) {
         items = [D.sec1[ROUTED_IDX], ...D.sec1.filter((_, i) => i !== ROUTED_IDX)];
         fi = 0;
         keepBright = [0];
@@ -457,13 +473,13 @@ function buildBtns(sec) {
         fi = (sec === 'sec1' && typeof D.featuredStore === 'number' && D.featuredStore >= 0) ? D.featuredStore : -1;
         keepBright = (sec === 'sec1' && Array.isArray(D.featuredKeepBright)) ? D.featuredKeepBright : [];
     }
-    // sec2 的【美食團購】FB 社團：utm 命中士林/榮華 → 換成該店專屬社團（按鈕文字一起換，訪客才知道進的是哪店）。
+    // sec2 的【美食團購】FB 社團：utm 命中士林/榮華/內湖 → 換成該店專屬社團（按鈕文字維持共用短名）。
     // ❗ 必須同時比 t==='fb' 與 label 含「美食團購」—— sec2 有兩顆 FB，
     //    只看 t==='fb' 會把【童裝女裝用品】臉書社團（全站共用）一起改掉。
     const fbGroup = (sec === 'sec2') ? STORE_FB_GROUPS[ROUTED_KEY] : null;
     if (fbGroup) {
         items = items.map(b => (b && b.t === 'fb' && (b.label || '').includes('美食團購'))
-            ? { ...b, url: fbGroup.url, label: '🍴【' + fbGroup.store + '】美食團購臉書社團' }
+            ? { ...b, url: fbGroup.url }
             : b);
     }
     return items.map((b, i) => {
