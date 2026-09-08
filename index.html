@@ -267,11 +267,9 @@ const DEFAULT_DATA = {
     "sec1": [
         {
             "t": "line",
-            "label": "🍴【桃園榮華店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ",
-            "addr": "桃園區榮華街63巷23號",
-            "lat": 24.974607,
-            "lng": 121.3209675
+            "label": "🍴【內湖店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/jIg6bJdGUjUsI0ghx-0FdAkhe6AF-NduUSCtgQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
+            "addr": "台北市內湖區內湖路一段629巷36弄2號"
         },
         {
             "t": "line",
@@ -296,6 +294,14 @@ const DEFAULT_DATA = {
             "addr": "三重區二重里大有街1之12號（二重國小對面）",
             "lat": 25.066132,
             "lng": 121.4773289
+        },
+        {
+            "t": "line",
+            "label": "🍴【桃園榮華店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/bwTXKC1zb84zCy86O_v9EE1FxePEL7CzdwSPUQ",
+            "addr": "桃園區榮華街63巷23號",
+            "lat": 24.974607,
+            "lng": 121.3209675
         },
         {
             "t": "line",
@@ -328,12 +334,6 @@ const DEFAULT_DATA = {
             "addr": "苗栗市文山里國華路780號",
             "lat": 24.5718236,
             "lng": 120.8146227
-        },
-        {
-            "t": "line",
-            "label": "🍴【內湖店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/jIg6bJdGUjUsI0ghx-0FdAkhe6AF-NduUSCtgQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
-            "addr": "台北市內湖區內湖路一段629巷36弄2號"
         }
     ],
     "sec2Title": "社群連結",
@@ -458,13 +458,14 @@ function buildBtns(sec) {
     let items = D[sec] || [];
     let fi, keepBright;
     if (sec === 'sec1' && ROUTED_KEY === '內湖') {
-        const rank = ['內湖', '士林葫東', '桃園榮華'];
+        // 內湖廣告頁：內湖唯一放大；士林／板橋／三重維持正常尺寸，之後才是榮華。
+        const rank = ['內湖', '士林葫東', '板橋宏國', '三重大有', '桃園榮華'];
         items = [
             ...rank.map(k => D.sec1.find(b => (b.label || '').includes(k))).filter(Boolean),
             ...D.sec1.filter(b => !rank.some(k => (b.label || '').includes(k)))
         ];
         fi = 0;
-        keepBright = [0];
+        keepBright = [1, 2, 3];
     } else if (sec === 'sec1' && ROUTED_IDX >= 0) {
         items = [D.sec1[ROUTED_IDX], ...D.sec1.filter((_, i) => i !== ROUTED_IDX)];
         fi = 0;
