@@ -366,9 +366,7 @@ const DEFAULT_DATA = {
     },
     "featuredStore": 0,
     "featuredKeepBright": [
-        1,
-        2,
-        3
+        1
     ],
     "hotDeals": {
         "on": false,
@@ -458,14 +456,14 @@ function buildBtns(sec) {
     let items = D[sec] || [];
     let fi, keepBright;
     if (sec === 'sec1' && ROUTED_KEY === '內湖') {
-        // 內湖廣告頁：內湖唯一放大；士林／板橋／三重維持正常尺寸，之後才是榮華。
+        // 內湖廣告頁：內湖唯一放大、士林維持正常；板橋／三重起與榮華同為次要樣式。
         const rank = ['內湖', '士林葫東', '板橋宏國', '三重大有', '桃園榮華'];
         items = [
             ...rank.map(k => D.sec1.find(b => (b.label || '').includes(k))).filter(Boolean),
             ...D.sec1.filter(b => !rank.some(k => (b.label || '').includes(k)))
         ];
         fi = 0;
-        keepBright = [1, 2, 3];
+        keepBright = [1];
     } else if (sec === 'sec1' && ROUTED_IDX >= 0) {
         items = [D.sec1[ROUTED_IDX], ...D.sec1.filter((_, i) => i !== ROUTED_IDX)];
         fi = 0;
