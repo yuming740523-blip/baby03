@@ -2,6 +2,7 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-09-19 | [大甲育英與內湖門市查核座標、落地頁分流與新增門市 SOP](2026-09-19_dajia-neihu-verified-store-coordinates.md) | P2 | Bug Fix / Store onboarding data integrity / Production verification | 71db1bb + 47ad049 + e2d52d8 + a884e42 |
 | 2026-09-08 | [內湖門市優先順位與卡片視覺層級調整](2026-09-08_neihu-store-priority-visual-hierarchy.md) | P3 | Feature / UI hierarchy adjustment | `dfecf5f` + `3e3d28b` |
 | 2026-08-23 | [士林／榮華依 utm 導向各店專屬美食團購 FB 社團](2026-08-23_store-fb-group-routing.md) | P2 | Feature（社團層分店分流）| `f814fdc` |
 | 2026-08-11 | [門市地址可開地圖 + 直線距離 + 誤點修復 + 首頁效能優化](2026-08-11_store-map-distance-and-perf.md) | P2（內含 2 個 P1 未爆彈） | Feature + Bug Fix（誤點/資料漂移/CDN 快取）+ 效能 | `789ae09`…`44ed4ee`（5 筆） |
