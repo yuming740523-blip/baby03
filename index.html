@@ -281,6 +281,12 @@ const DEFAULT_DATA = {
         },
         {
             "t": "line",
+            "label": "🍴【大甲育英店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/soUaNEoHLRUC2BCzSAS-30NsX8v75lN9tQOPhA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
+            "addr": "台中市大甲區育英路125號"
+        },
+        {
+            "t": "line",
             "label": "🍴【板橋宏國店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/AsoKRIV7vsE2rSXSpE-Hm9gB30rBFhNekicQUQ",
             "addr": "板橋區江翠里宏國路26號",
@@ -334,12 +340,6 @@ const DEFAULT_DATA = {
             "addr": "苗栗市文山里國華路780號",
             "lat": 24.5718236,
             "lng": 120.8146227
-        },
-        {
-            "t": "line",
-            "label": "🍴【大甲育英店】美食團購LINE下單",
-            "url": "https://line.me/ti/g2/soUaNEoHLRUC2BCzSAS-30NsX8v75lN9tQOPhA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
-            "addr": "台中市大甲區育英路125號"
         }
     ],
     "sec2Title": "社群連結",
@@ -405,6 +405,8 @@ const STORE_ROUTES = [
     // 通則會讓其中一店吃掉另一店的流量；廣告 utm 必須寫 ronghua 或 lianpu 才會命中。
     { rx: /ronghua|榮華/i,  key: '桃園榮華' },
     { rx: /neihu|內湖/i,    key: '內湖' },
+    // 大甲專屬落地頁：?utm_campaign=dajia_yuying&utm_content=dajia_page
+    { rx: /dajia|大甲|育英/i, key: '大甲育英' },
     { rx: /banqiao|板橋/i,  key: '板橋宏國' },
     { rx: /sanchong|三重/i, key: '三重大有' },
     { rx: /bade|八德/i,     key: '八德金和' },
