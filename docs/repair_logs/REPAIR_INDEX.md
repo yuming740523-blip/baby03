@@ -2,6 +2,7 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-10-05 | [新莊中港店新增、首頁排序與專屬落地頁](2026-10-05_xinzhuang_store_landing.md) | P2 | Feature / Store onboarding data integrity / Production verification | `9a0ebc5` + `f061e1f` |
 | 2026-10-04 | [大甲育英店地址補註大甲國中對面](2026-10-04_dajia_address_school_landmark.md) | P3 | Content update / Production source verification | `fefdb20` |
 | 2026-09-19 | [大甲育英與內湖門市查核座標、落地頁分流與新增門市 SOP](2026-09-19_dajia-neihu-verified-store-coordinates.md) | P2 | Bug Fix / Store onboarding data integrity / Production verification | 71db1bb + 47ad049 + e2d52d8 + a884e42 |
 | 2026-09-08 | [內湖門市優先順位與卡片視覺層級調整](2026-09-08_neihu-store-priority-visual-hierarchy.md) | P3 | Feature / UI hierarchy adjustment | `dfecf5f` + `3e3d28b` |
