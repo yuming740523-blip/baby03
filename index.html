@@ -832,7 +832,6 @@ function render() {
     </picture>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     ${routeFeatureMarkup()}
-    <h1 class="region-count">🌼 ${D.sec1.length} 間營運門市 · 2 間準備中 🌼</h1>
     <div class="geo-row">
         <button type="button" id="locateBtn" class="geo-btn">📍 點擊顯示離我多遠</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
