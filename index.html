@@ -137,6 +137,93 @@
             color:#fff; font-size:19px; font-weight:700;
             text-shadow:0 2px 6px rgba(0,0,0,0.6); letter-spacing:1px;
         }
+        /* 北中南門市格：門市資料仍由 @@DATA 區提供，這裡只定義展示順序與樣式。 */
+        .region-count {
+            margin:0 0 10px; padding:10px; border-radius:15px;
+            background:linear-gradient(110deg,#ffb443,#ff7e31); color:#fff;
+            font-size:17px; font-weight:900; letter-spacing:.04em;
+            text-align:center; text-shadow:0 2px 2px rgba(155,64,25,.4);
+            box-shadow:0 4px 12px rgba(232,119,37,.25);
+        }
+        .region-section {
+            margin:0 0 10px; padding:7px 6px 9px; border-radius:17px;
+            border:1px solid var(--region-line); background:var(--region-wash);
+        }
+        .region-section.north { --region-line:#89c4ff; --region-wash:#eff8ff; --region-head:#428ce3; }
+        .region-section.central { --region-line:#ffa6c4; --region-wash:#fff0f6; --region-head:#e52e83; }
+        .region-section.south { --region-line:#a8d0ae; --region-wash:#eef7ef; --region-head:#41915c; }
+        .region-section.other { --region-line:#d5c4ec; --region-wash:#f3edfc; --region-head:#8349bf; }
+        .region-heading {
+            width:fit-content; min-width:142px; margin:0 auto 7px; padding:3px 15px;
+            border-radius:50px; background:var(--region-head); color:#fff;
+            font-size:17px; line-height:1.3; letter-spacing:.14em;
+            box-shadow:0 2px 5px rgba(0,0,0,.13);
+        }
+        .region-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }
+        .regional-store {
+            display:flex; align-items:center; min-width:0; min-height:48px; padding:3px 4px;
+            border:1px solid var(--store-border); border-radius:12px;
+            background:linear-gradient(180deg,#fff,var(--store-tint)); color:var(--store-ink);
+            font-family:inherit; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.08);
+        }
+        .regional-store:hover { filter:brightness(.97); }
+        .regional-store:active { transform:scale(.97); }
+        .regional-store:disabled { opacity:.76; cursor:default; filter:grayscale(.3); }
+        .regional-store:disabled:active { transform:none; }
+        .regional-store:focus-visible { outline:3px solid #186ac7; outline-offset:2px; }
+        .regional-store[aria-pressed="true"] { outline:2px solid var(--store-dot); outline-offset:1px; }
+        .regional-store.is-featured { border-width:2px; box-shadow:0 3px 12px rgba(233,30,99,.25); }
+        .store-ordinal {
+            display:grid; place-items:center; flex:0 0 24px; width:24px; height:24px;
+            border-radius:50%; background:var(--store-dot); color:#fff; font-size:13px;
+            font-weight:800; line-height:1; box-shadow:0 1px 3px rgba(0,0,0,.2);
+        }
+        .store-label { min-width:0; flex:1; text-align:center; }
+        .store-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+            font-size:clamp(10px,3vw,12px); font-weight:750; letter-spacing:-.03em; }
+        .store-soon { display:block; color:#935b24; font-size:10px; font-weight:800; line-height:1.1; }
+        .store-blue { --store-border:#a6c8ff; --store-tint:#eaf4ff; --store-ink:#1554af; --store-dot:#1265ca; }
+        .store-pink { --store-border:#fac5d4; --store-tint:#fff0f3; --store-ink:#c61c5a; --store-dot:#ef3476; }
+        .store-green { --store-border:#b7d9c2; --store-tint:#edf8ef; --store-ink:#126546; --store-dot:#23865c; }
+        .store-purple { --store-border:#d5c4ec; --store-tint:#f3edfc; --store-ink:#65339b; --store-dot:#8349bf; }
+        .store-orange { --store-border:#ffd2a6; --store-tint:#fff3e8; --store-ink:#a95117; --store-dot:#ef751d; }
+        .region-hint { margin:10px 5px; color:#fff; font-size:12px; line-height:1.5; text-align:center; text-shadow:0 1px 3px #333; }
+        .route-feature {
+            display:flex; align-items:center; justify-content:space-between; gap:10px;
+            margin:0 0 12px; padding:12px 14px; border:2px solid #e91e63; border-radius:16px;
+            background:linear-gradient(120deg,#fff 10%,#fff0f5); text-align:left;
+            box-shadow:0 4px 16px rgba(233,30,99,.25);
+        }
+        .route-feature-copy { min-width:0; }
+        .route-feature-label { display:block; color:#9c1742; font-size:11px; font-weight:800; }
+        .route-feature-name { display:block; color:#333; font-size:17px; font-weight:900; }
+        .route-feature-actions { display:flex; flex-shrink:0; gap:6px; }
+        .route-feature-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:42px;
+            padding:7px 10px; border-radius:10px; font-size:12px; font-weight:800; text-decoration:none; }
+        .route-feature-line { background:#06c755; color:#073d1a; }
+        .route-feature-map { border:1px solid #77b68b; background:#f0fdf4; color:#166534; }
+        .detail-panel { margin:13px 0 16px; border-radius:22px; background:#fff; color:#273244; box-shadow:0 4px 18px rgba(0,0,0,.14); }
+        .detail-content { padding:18px; text-align:left; }
+        .detail-head { display:flex; align-items:flex-start; gap:12px; }
+        .detail-number { display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px;
+            border-radius:50%; background:#2065bd; color:#fff; font-weight:800; }
+        .detail-head h2 { margin:1px 0 2px; color:#273244; font-size:20px; }
+        .detail-content p { margin:5px 0; color:#4f5661; font-size:14px; line-height:1.55; overflow-wrap:anywhere; }
+        .detail-content .detail-distance { color:#b71657; font-weight:700; }
+        .detail-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+        .detail-actions a { display:flex; align-items:center; justify-content:center; gap:7px; min-height:48px;
+            padding:8px; border-radius:12px; font-weight:700; text-decoration:none; }
+        .detail-line { background:#06c755; color:#073d1a; }
+        .detail-map { border:1px solid #77b68b; background:#f0fdf4; color:#166534; }
+        .store-distance { display:block; margin-top:1px; font-size:10px; }
+        @media (max-width:340px) {
+            .region-grid { gap:3px; }
+            .regional-store { padding:3px 2px; }
+            .store-ordinal { flex-basis:22px; width:22px; height:22px; font-size:12px; }
+            .route-feature { gap:6px; padding:10px; }
+            .route-feature-name { font-size:15px; }
+            .route-feature-actions a { padding:6px; font-size:11px; }
+        }
         .info-card {
             background:rgba(255,255,255,0.95); border-radius:16px;
             padding:24px 20px; margin-bottom:8px;
@@ -544,6 +631,159 @@ function buildBtns(sec) {
     }).join('');
 }
 
+// 展示層固定採樣本順序；實際門市資料一律從 DEFAULT_DATA.sec1 讀取。
+// 兩間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
+const STORE_LAYOUT = [
+    { key:'內湖', name:'內湖店', region:'北區', color:'blue' },
+    { key:'士林葫東', name:'士林葫東店', region:'北區', color:'pink' },
+    { key:'新莊中港', name:'新莊中港店', region:'北區', color:'green' },
+    { key:'板橋宏國', name:'板橋宏國店', region:'北區', color:'purple' },
+    { key:'三重大有', name:'三重大有店', region:'北區', color:'blue' },
+    { key:'桃園蓮埔', name:'桃園蓮埔店', region:'北區', color:'orange' },
+    { key:'八德金和', name:'八德金和店', region:'北區', color:'green' },
+    { key:'中壢環北', name:'中壢環北店', region:'北區', color:'blue' },
+    { key:'楊梅環中', name:'楊梅環中', region:'北區', color:'orange', status:'準備中' },
+    { key:'桃園榮華', name:'桃園榮華店', region:'北區', color:'purple' },
+    { key:'苗栗國華', name:'苗栗國華店', region:'中區', color:'pink' },
+    { key:'大甲育英', name:'大甲育英店', region:'中區', color:'blue' },
+    { key:'台南東區', name:'台南東區', region:'南區', color:'green', status:'準備中' }
+];
+let selectedStoreIndex = 0;
+let lastGeoPosition = null;
+
+function regionalSource(store) {
+    if (store.status) return null;
+    return (D.sec1 || []).find(b => {
+        const match = (b.label || '').match(/【([^】]+)】/);
+        return match && match[1] === store.name;
+    }) || null;
+}
+
+function regionalEntries() {
+    const entries = STORE_LAYOUT.map((store, layoutIndex) => {
+        const source = regionalSource(store);
+        return { store, source, dataIndex: source ? D.sec1.indexOf(source) : -1, layoutIndex, isExtra: false };
+    });
+    const represented = new Set(entries.map(entry => entry.source).filter(Boolean));
+    const colors = ['blue', 'pink', 'green', 'purple', 'orange'];
+    (D.sec1 || []).forEach((source, dataIndex) => {
+        const match = (source.label || '').match(/【([^】]+)】/);
+        if (source.t !== 'line' || !match || represented.has(source)) return;
+        const layoutIndex = entries.length;
+        const store = {
+            key: match[1].replace(/店$/, ''),
+            name: match[1],
+            region: '其他門市',
+            color: colors[(layoutIndex - STORE_LAYOUT.length) % colors.length]
+        };
+        entries.push({ store, source, dataIndex, layoutIndex, isExtra: true });
+    });
+    return entries;
+}
+
+function regionalMapUrl(store) {
+    const hasGeo = typeof store.lat === 'number' && typeof store.lng === 'number';
+    const query = hasGeo ? `${store.lat},${store.lng}` : (store.addr || '').trim();
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+function renderRegionalGrid(region, id, className) {
+    const entries = STORE_LAYOUT.map((store, layoutIndex) => ({ store, layoutIndex }))
+        .filter(({ store }) => store.region === region);
+    const cards = entries.map(({ store, layoutIndex }) => {
+        const source = regionalSource(store);
+        const dataIndex = source ? D.sec1.indexOf(source) : -1;
+        const featured = dataIndex >= 0 && (dataIndex === ROUTED_IDX || (ROUTED_IDX < 0 && dataIndex === D.featuredStore));
+        const distance = source && typeof source.lat === 'number' && typeof source.lng === 'number'
+            ? `<span class="btn-distance store-distance" data-lat="${source.lat}" data-lng="${source.lng}"></span>` : '';
+        const label = source ? '查看門市資訊' : store.status;
+        return `<button type="button" class="regional-store store-${store.color}${featured ? ' is-featured' : ''}"
+                    data-store-index="${layoutIndex}" aria-label="第${layoutIndex + 1}間，${esc(store.name)}，${esc(label)}"
+                    aria-pressed="false"${store.status ? ' disabled' : ''}>
+                    <span class="store-ordinal">${layoutIndex + 1}</span>
+                    <span class="store-label"><span class="store-name">${esc(store.name)}</span>${store.status ? `<small class="store-soon">${esc(store.status)}</small>` : distance}</span>
+                </button>`;
+    }).join('');
+    return `<section class="region-section ${className}" id="${id}" aria-labelledby="${id}-title">
+        <h2 class="region-heading" id="${id}-title">${region}</h2><div class="region-grid">${cards}</div>
+    </section>`;
+}
+
+function routeFeatureMarkup() {
+    if (ROUTED_IDX < 0) return '';
+    const source = D.sec1[ROUTED_IDX];
+    const match = (source.label || '').match(/【([^】]+)】/);
+    const storeName = match ? match[1] : '指定門市';
+    const mapUrl = regionalMapUrl(source);
+    return `<aside class="route-feature" aria-label="廣告指定門市">
+        <div class="route-feature-copy"><span class="route-feature-label">廣告指定門市</span><strong class="route-feature-name">${esc(storeName)}</strong></div>
+        <div class="route-feature-actions">
+            <a class="route-feature-line" href="${esc(source.url)}" target="_blank" rel="noopener"
+               data-fb-event="Lead" data-store="${esc(storeName)}" data-channel="line_openchat" data-button="${esc(source.label)}">加入 LINE</a>
+            <a class="route-feature-map" href="${esc(mapUrl)}" target="_blank" rel="noopener" data-map-link="1" data-store="${esc(storeName)}">地圖</a>
+        </div>
+    </aside>`;
+}
+
+function renderOtherStores() {
+    const extras = regionalEntries().filter(entry => entry.isExtra);
+    if (!extras.length) return '';
+    const cards = extras.map(({ store, source, dataIndex, layoutIndex }) => {
+        const featured = dataIndex === ROUTED_IDX || (ROUTED_IDX < 0 && dataIndex === D.featuredStore);
+        const hasGeo = typeof source.lat === 'number' && typeof source.lng === 'number';
+        const distance = hasGeo
+            ? `<span class="btn-distance store-distance" data-lat="${source.lat}" data-lng="${source.lng}"></span>` : '';
+        return `<button type="button" class="regional-store store-${store.color}${featured ? ' is-featured' : ''}"
+                    data-store-index="${layoutIndex}" aria-label="第${layoutIndex + 1}間，${esc(store.name)}，查看門市資訊"
+                    aria-pressed="false">
+                    <span class="store-ordinal">${layoutIndex + 1}</span>
+                    <span class="store-label"><span class="store-name">${esc(store.name)}</span>${distance}</span>
+                </button>`;
+    }).join('');
+    return `<section class="region-section other" id="other-stores" aria-labelledby="other-stores-title">
+        <h2 class="region-heading" id="other-stores-title">其他門市</h2><div class="region-grid">${cards}</div>
+    </section>`;
+}
+
+function showRegionalStore(index) {
+    const entry = regionalEntries()[index];
+    const store = entry && entry.store;
+    const source = entry && entry.source;
+    if (!source) return;
+    selectedStoreIndex = index;
+    document.querySelectorAll('.regional-store').forEach(button =>
+        button.setAttribute('aria-pressed', String(Number(button.dataset.storeIndex) === index)));
+    document.getElementById('detail-number').textContent = index + 1;
+    document.getElementById('detail-title').textContent = store.name;
+    document.getElementById('detail-region').textContent = store.region;
+    document.getElementById('detail-address').textContent = `📍 ${source.addr || ''}`;
+    const distance = document.getElementById('detailDistance');
+    const hasGeo = typeof source.lat === 'number' && typeof source.lng === 'number';
+    distance.textContent = lastGeoPosition && hasGeo
+        ? `直線${formatDistance(haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng))}（非車程）`
+        : '點擊上方定位按鈕可查直線距離（非車程）';
+    const line = document.getElementById('detailLine');
+    line.href = source.url;
+    line.dataset.store = store.name;
+    line.dataset.button = source.label || '';
+    line.setAttribute('aria-label', `${store.name}加入 LINE 社群`);
+    const map = document.getElementById('detailMap');
+    map.href = regionalMapUrl(source);
+    map.dataset.store = store.name;
+}
+
+function initRegionalStores() {
+    document.querySelectorAll('.regional-store:not(:disabled)').forEach(button => {
+        button.addEventListener('click', () => showRegionalStore(Number(button.dataset.storeIndex)));
+    });
+    const entries = regionalEntries();
+    const routedLayoutIndex = ROUTED_IDX >= 0
+        ? entries.findIndex(entry => entry.source && entry.dataIndex === ROUTED_IDX)
+        : -1;
+    const featuredLayoutIndex = entries.findIndex(entry => entry.dataIndex === D.featuredStore && entry.source);
+    showRegionalStore(routedLayoutIndex >= 0 ? routedLayoutIndex : featuredLayoutIndex >= 0 ? featuredLayoutIndex : 0);
+}
+
 function render() {
     document.body.style.backgroundImage = `url('${D.bg}')`;
     // 首頁頂部大圖 2026-06-10 業主指示移除；DATA.logo 保留，要復原把原 <picture> 區塊（webp source + img.logo）加回即可
@@ -584,14 +824,35 @@ function render() {
              alt="寶貝團購" fetchpriority="high" decoding="async">
     </picture>
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
-    <div class="section-row"><h1 class="section-title">${esc(D.sec1Title)}</h1></div>
+    ${routeFeatureMarkup()}
+    <h1 class="region-count">🌼 ${D.sec1.length} 間營運門市 · 2 間準備中 🌼</h1>
     <div class="geo-row">
         <button type="button" id="locateBtn" class="geo-btn">📍 點擊顯示離我多遠</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
-    <div class="btn-list">${buildBtns('sec1')}</div>
+    ${renderRegionalGrid('北區', 'north', 'north')}
+    ${renderRegionalGrid('中區', 'central', 'central')}
+    ${renderRegionalGrid('南區', 'south', 'south')}
+    ${renderOtherStores()}
+    <p class="region-hint">點選門市查看地址、地圖與 LINE 社群。</p>
+    <section class="detail-panel" id="selected-store" aria-labelledby="detail-title">
+        <div class="detail-content">
+            <div class="detail-head"><span class="detail-number" id="detail-number"></span><div><h2 id="detail-title"></h2><p id="detail-region"></p></div></div>
+            <p id="detail-address"></p>
+            <p class="detail-distance" id="detailDistance">點擊上方定位按鈕可查直線距離（非車程）</p>
+            <div class="detail-actions">
+                <a class="detail-line" id="detailLine" target="_blank" rel="noopener" data-fb-event="Lead" data-channel="line_openchat">
+                    <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white" aria-hidden="true"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>
+                    <span>加入 LINE 社群</span>
+                </a>
+                <a class="detail-map" id="detailMap" target="_blank" rel="noopener" data-map-link="1">開啟地圖</a>
+            </div>
+        </div>
+    </section>
     <div class="section-row"><div class="section-title">${esc(D.sec2Title)}</div></div>
     <div class="btn-list">${buildBtns('sec2')}</div>`;
+
+    initRegionalStores();
 
     let floatBtns = '';
     if (D.widget && D.widget.on) {
@@ -666,6 +927,7 @@ function formatDistance(km) {
 
 // 只更新距離文字；沒有 lat/lng 的門市（例如日後用編輯器新增的店）就保持空白，不影響地圖按鈕
 function renderDistances(lat, lng) {
+    lastGeoPosition = { latitude: lat, longitude: lng };
     let n = 0;
     document.querySelectorAll('.btn-distance[data-lat][data-lng]').forEach(function(box) {
         const sLat = parseFloat(box.dataset.lat);
@@ -676,6 +938,11 @@ function renderDistances(lat, lng) {
         box.textContent = ` · 直線${txt}`;
         n++;
     });
+    const current = regionalEntries()[selectedStoreIndex]?.source;
+    const detailDistance = document.getElementById('detailDistance');
+    if (current && detailDistance && typeof current.lat === 'number' && typeof current.lng === 'number') {
+        detailDistance.textContent = `直線${formatDistance(haversineKm(lat, lng, current.lat, current.lng))}（非車程）`;
+    }
     return n;
 }
 
