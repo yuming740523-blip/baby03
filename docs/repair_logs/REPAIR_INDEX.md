@@ -2,6 +2,7 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-10-15 | [移除首頁「11 間營運門市 · 2 間準備中」標語](2026-10-15_remove_store_count_heading.md) | P3 | UI content removal / Production verification | `a629b47` |
 | 2026-10-14 | [榮華門市 LINE 社群改為與八德共用](2026-10-14_ronghua_line_shared_with_bade.md) | P3 | Content update / Production verification | `ae3913e` |
 | 2026-10-05 | [新莊中港店新增、首頁排序與專屬落地頁](2026-10-05_xinzhuang_store_landing.md) | P2 | Feature + Bug Fix / Store onboarding coordinate closure / Production verification | `9a0ebc5` + `f061e1f` + `f3eaf0c` |
 | 2026-10-04 | [大甲育英店地址補註大甲國中對面](2026-10-04_dajia_address_school_landmark.md) | P3 | Content update / Production source verification | `fefdb20` |
