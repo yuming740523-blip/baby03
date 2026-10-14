@@ -2,6 +2,7 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-10-14 | [榮華門市 LINE 社群改為與八德共用](2026-10-14_ronghua_line_shared_with_bade.md) | P3 | Content update / Production verification | `ae3913e` |
 | 2026-10-05 | [新莊中港店新增、首頁排序與專屬落地頁](2026-10-05_xinzhuang_store_landing.md) | P2 | Feature + Bug Fix / Store onboarding coordinate closure / Production verification | `9a0ebc5` + `f061e1f` + `f3eaf0c` |
 | 2026-10-04 | [大甲育英店地址補註大甲國中對面](2026-10-04_dajia_address_school_landmark.md) | P3 | Content update / Production source verification | `fefdb20` |
 | 2026-09-19 | [大甲育英與內湖門市查核座標、落地頁分流與新增門市 SOP](2026-09-19_dajia-neihu-verified-store-coordinates.md) | P2 | Bug Fix / Store onboarding data integrity / Production verification | 71db1bb + 47ad049 + e2d52d8 + a884e42 |
