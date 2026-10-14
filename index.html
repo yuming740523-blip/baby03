@@ -774,7 +774,14 @@ function showRegionalStore(index) {
 
 function initRegionalStores() {
     document.querySelectorAll('.regional-store:not(:disabled)').forEach(button => {
-        button.addEventListener('click', () => showRegionalStore(Number(button.dataset.storeIndex)));
+        button.addEventListener('click', () => {
+            showRegionalStore(Number(button.dataset.storeIndex));
+            const detail = document.getElementById('selected-store');
+            const notice = document.querySelector('.top-notice');
+            const noticeOffset = notice ? Math.ceil(notice.getBoundingClientRect().height) + 12 : 12;
+            detail.style.scrollMarginTop = `${noticeOffset}px`;
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     });
     const entries = regionalEntries();
     const routedLayoutIndex = ROUTED_IDX >= 0
