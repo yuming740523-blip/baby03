@@ -404,9 +404,9 @@ const DEFAULT_DATA = {
             "t": "line",
             "label": "🍴【桃園榮華店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/Op9gU_Jp1O0452mwLTlcklV03TegLNy9Q9df2w",
-            "addr": "桃園區榮華街63巷23號",
-            "lat": 24.974607,
-            "lng": 121.3209675
+            "addr": "八德區大和里金和路51號",
+            "lat": 24.954951,
+            "lng": 121.2970206
         },
         {
             "t": "line",
@@ -759,9 +759,9 @@ function showRegionalStore(index) {
     document.getElementById('detail-address').textContent = `📍 ${source.addr || ''}`;
     const distance = document.getElementById('detailDistance');
     const hasGeo = typeof source.lat === 'number' && typeof source.lng === 'number';
-    distance.textContent = lastGeoPosition && hasGeo
-        ? `直線${formatDistance(haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng))}（非車程）`
-        : '點擊上方定位按鈕可查直線距離（非車程）';
+    distance.textContent = lastGeoPosition
+        ? (hasGeo ? `直線${formatDistance(haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng))}（非車程）` : '此門市沒有可計算的座標')
+        : '允許定位後顯示直線距離（非車程）';
     const line = document.getElementById('detailLine');
     line.href = source.url;
     line.dataset.store = store.name;
@@ -772,15 +772,20 @@ function showRegionalStore(index) {
     map.dataset.store = store.name;
 }
 
+function scrollSelectedStoreIntoView() {
+    const detail = document.getElementById('selected-store');
+    if (!detail) return;
+    const notice = document.querySelector('.top-notice');
+    const noticeOffset = notice ? Math.ceil(notice.getBoundingClientRect().height) + 12 : 12;
+    detail.style.scrollMarginTop = `${noticeOffset}px`;
+    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function initRegionalStores() {
     document.querySelectorAll('.regional-store:not(:disabled)').forEach(button => {
         button.addEventListener('click', () => {
             showRegionalStore(Number(button.dataset.storeIndex));
-            const detail = document.getElementById('selected-store');
-            const notice = document.querySelector('.top-notice');
-            const noticeOffset = notice ? Math.ceil(notice.getBoundingClientRect().height) + 12 : 12;
-            detail.style.scrollMarginTop = `${noticeOffset}px`;
-            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            scrollSelectedStoreIntoView();
         });
     });
     const entries = regionalEntries();
@@ -833,7 +838,7 @@ function render() {
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     ${routeFeatureMarkup()}
     <div class="geo-row">
-        <button type="button" id="locateBtn" class="geo-btn">📍 點擊顯示離我多遠</button>
+        <button type="button" id="locateBtn" class="geo-btn">📍 查看離我最近的門市</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
     ${renderRegionalGrid('北區', 'north', 'north')}
@@ -845,7 +850,7 @@ function render() {
         <div class="detail-content">
             <div class="detail-head"><span class="detail-number" id="detail-number"></span><div><h2 id="detail-title"></h2><p id="detail-region"></p></div></div>
             <p id="detail-address"></p>
-            <p class="detail-distance" id="detailDistance">點擊上方定位按鈕可查直線距離（非車程）</p>
+            <p class="detail-distance" id="detailDistance">允許定位後顯示直線距離（非車程）</p>
             <div class="detail-actions">
                 <a class="detail-line" id="detailLine" target="_blank" rel="noopener" data-fb-event="Lead" data-channel="line_openchat">
                     <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white" aria-hidden="true"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>
@@ -952,39 +957,82 @@ function renderDistances(lat, lng) {
     return n;
 }
 
-// 一律由使用者按按鈕才定位。落地頁一進站就跳系統權限對話框會嚇跑客人，直接影響加入社群的轉換。
 function initGeo() {
     const btn = document.getElementById('locateBtn');
     const st  = document.getElementById('geoStatus');
     if (!btn || !st) return;
+    let requestInFlight = false;
+    let selectNearestWhenReady = false;
+
+    const openNearestStore = function() {
+        const entries = regionalEntries();
+        let nearestIndex = -1;
+        let nearestDistance = Infinity;
+        entries.forEach((entry, index) => {
+            const source = entry.source;
+            if (!source || !Number.isFinite(source.lat) || !Number.isFinite(source.lng)) return;
+            const distance = haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestIndex = index;
+            }
+        });
+        if (nearestIndex < 0) {
+            st.textContent = '目前沒有可計算距離的營運門市；仍可直接點選門市。';
+            return;
+        }
+        showRegionalStore(nearestIndex);
+        scrollSelectedStoreIntoView();
+        st.textContent = '已開啟距離最近的門市資訊（直線距離，非車程）';
+    };
+
+    const failPosition = function() {
+        requestInFlight = false;
+        selectNearestWhenReady = false;
+        st.textContent = '無法取得定位；仍可直接點選門市，按鈕可重試。';
+    };
+
+    const requestPosition = function() {
+        if (!navigator.geolocation) {
+            selectNearestWhenReady = false;
+            st.textContent = '此瀏覽器不支援定位；仍可直接點選門市。';
+            return;
+        }
+        if (requestInFlight) return;
+
+        requestInFlight = true;
+        st.textContent = selectNearestWhenReady
+            ? '正在定位，取得位置後會開啟最近門市…'
+            : '正在取得位置以顯示各店直線距離…';
+        try {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                requestInFlight = false;
+                const n = renderDistances(pos.coords.latitude, pos.coords.longitude);
+                const shouldOpenNearest = selectNearestWhenReady;
+                selectNearestWhenReady = false;
+                if (shouldOpenNearest) {
+                    openNearestStore();
+                    return;
+                }
+                st.textContent = n > 0
+                    ? '已顯示各店直線距離（非車程）'
+                    : '目前沒有可計算距離的門市；仍可直接點選門市。';
+            }, failPosition, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
+        } catch {
+            failPosition();
+        }
+    };
+
     btn.addEventListener('click', function() {
-        if (!navigator.geolocation) { st.textContent = '此瀏覽器不支援定位，仍可點「地圖」按鈕'; return; }
-        btn.disabled = true;
-        st.textContent = '定位中…';
-        let settled = false;
-        // 看門狗：getCurrentPosition 的 timeout 依規格「不包含等待使用者授權的時間」，
-        // 實測 Chrome 在權限對話框沒被回答時，8 秒 timeout 永遠不會觸發 →
-        // 按鈕會一直卡在 disabled + 「定位中…」。這支計時器只負責把介面解鎖，
-        // 不取消底下那個請求（使用者稍後才按允許的話，距離仍然會補上）。
-        const watchdog = setTimeout(function() {
-            if (settled) return;
-            btn.disabled = false;
-            st.textContent = '還在等定位授權，可先點「地圖」按鈕';
-        }, 12000);
-        const finish = function(text) {
-            settled = true;
-            clearTimeout(watchdog);
-            btn.disabled = false;
-            st.textContent = text;
-        };
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            const n = renderDistances(pos.coords.latitude, pos.coords.longitude);
-            finish(n > 0 ? '已顯示直線距離（非車程）' : '目前沒有可計算距離的門市');
-        }, function() {
-            // 拒絕授權／逾時／非 HTTPS 都走這裡，頁面其餘功能不受影響
-            finish('無法取得定位，仍可點「地圖」按鈕');
-        }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
+        if (lastGeoPosition) {
+            openNearestStore();
+            return;
+        }
+        selectNearestWhenReady = true;
+        st.textContent = '正在等待定位授權，取得位置後會開啟最近門市…';
+        requestPosition();
     });
+    requestPosition();
 }
 
 render();
