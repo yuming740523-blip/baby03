@@ -2,6 +2,7 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-10-15 | [最近門市跨區置頂與詳情同步修復](2026-10-15_nearest_store_cross_region_order.md) | P2 | Bug Fix / UX correction / Production verification | `54efdb4` |
 | 2026-10-15 | [移除首頁「11 間營運門市 · 2 間準備中」標語](2026-10-15_remove_store_count_heading.md) | P3 | UI content removal / Production verification | `a629b47` |
 | 2026-10-15 | [載入顯示門市距離、最近門市跳轉與榮華地址對齊八德](2026-10-15_auto_distance_nearest_store_ronghua_bade.md) | P2 | Feature + Store data correction / Production verification | `bcfad71` |
 | 2026-10-14 | [榮華門市 LINE 社群改為與八德共用](2026-10-14_ronghua_line_shared_with_bade.md) | P3 | Content update / Production verification | `ae3913e` |
