@@ -753,15 +753,20 @@ function showRegionalStore(index) {
     selectedStoreIndex = index;
     document.querySelectorAll('.regional-store').forEach(button =>
         button.setAttribute('aria-pressed', String(Number(button.dataset.storeIndex) === index)));
-    document.getElementById('detail-number').textContent = index + 1;
+    const selectedButton = [...document.querySelectorAll('.regional-store')]
+        .find(button => Number(button.dataset.storeIndex) === index);
+    document.getElementById('detail-number').textContent = selectedButton
+        ? selectedButton.querySelector('.store-ordinal').textContent
+        : index + 1;
     document.getElementById('detail-title').textContent = store.name;
     document.getElementById('detail-region').textContent = store.region;
     document.getElementById('detail-address').textContent = `📍 ${source.addr || ''}`;
     const distance = document.getElementById('detailDistance');
     const hasGeo = typeof source.lat === 'number' && typeof source.lng === 'number';
-    distance.textContent = lastGeoPosition
-        ? (hasGeo ? `直線${formatDistance(haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng))}（非車程）` : '此門市沒有可計算的座標')
-        : '允許定位後顯示直線距離（非車程）';
+    distance.textContent = lastGeoPosition && hasGeo
+        ? formatDistance(haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng))
+        : '';
+    distance.hidden = !distance.textContent;
     const line = document.getElementById('detailLine');
     line.href = source.url;
     line.dataset.store = store.name;
@@ -838,7 +843,7 @@ function render() {
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     ${routeFeatureMarkup()}
     <div class="geo-row">
-        <button type="button" id="locateBtn" class="geo-btn">📍 查看離我最近的門市</button>
+        <button type="button" id="locateBtn" class="geo-btn">📍 依所在位置排序門市</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
     ${renderRegionalGrid('北區', 'north', 'north')}
@@ -850,7 +855,7 @@ function render() {
         <div class="detail-content">
             <div class="detail-head"><span class="detail-number" id="detail-number"></span><div><h2 id="detail-title"></h2><p id="detail-region"></p></div></div>
             <p id="detail-address"></p>
-            <p class="detail-distance" id="detailDistance">允許定位後顯示直線距離（非車程）</p>
+            <p class="detail-distance" id="detailDistance" hidden></p>
             <div class="detail-actions">
                 <a class="detail-line" id="detailLine" target="_blank" rel="noopener" data-fb-event="Lead" data-channel="line_openchat">
                     <svg class="btn-icon icon-line" viewBox="0 0 32 32" fill="white" aria-hidden="true"><path d="M16 3C8.82 3 3 7.95 3 13.93c0 5.12 4.55 9.42 10.7 10.84.41.09.98.28 1.12.64.13.33.08.84.04 1.17l-.18 1.08c-.06.33-.26 1.28 1.12.7s7.44-4.38 10.16-7.5C28.28 18.22 29 16.17 29 13.93 29 7.95 23.18 3 16 3zm-4.5 14.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 011.5 0v4.25h2.25a.75.75 0 010 1.5zm2.5-.75a.75.75 0 01-1.5 0v-5a.75.75 0 011.5 0v5zm5.5 0a.75.75 0 01-1.35.45L15.5 13.6v3.15a.75.75 0 01-1.5 0v-5a.75.75 0 011.35-.45l2.65 3.6V11.75a.75.75 0 011.5 0v5zm4-3.5h-2.25v-1.5h2.25a.75.75 0 010 1.5zm0 3.5h-3a.75.75 0 01-.75-.75v-5a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5h-2.25v1h2.25a.75.75 0 010 1.5z"/></svg>
@@ -906,10 +911,7 @@ function openMessenger(e, url) {
     return false;
 }
 
-// ── 距離顯示（2026-08-11 試做）────────────────────────────────────────
-// 只做「直線距離」：站上沒有路線 API，也刻意不接（靜態頁放 API key 有風險）。
-// 文案一律標「直線」，不可寫成車程或路線距離。
-// 距離只是資訊，不動排序 —— 置頂/⭐主力推薦是業主指定的商業規則（utm 分流 + featuredStore）。
+// ── 門市距離與區內排序 ──────────────────────────────────────
 function haversineKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
     const toRad = d => d * Math.PI / 180;
@@ -936,7 +938,6 @@ function formatDistance(km) {
     return `約 ${Math.round(km)}km`;
 }
 
-// 只更新距離文字；沒有 lat/lng 的門市（例如日後用編輯器新增的店）就保持空白，不影響地圖按鈕
 function renderDistances(lat, lng) {
     lastGeoPosition = { latitude: lat, longitude: lng };
     let n = 0;
@@ -946,15 +947,56 @@ function renderDistances(lat, lng) {
         if (!isFinite(sLat) || !isFinite(sLng)) return;
         const txt = formatDistance(haversineKm(lat, lng, sLat, sLng));
         if (!txt) return;
-        box.textContent = ` · 直線${txt}`;
+        box.textContent = ` · ${txt}`;
         n++;
     });
     const current = regionalEntries()[selectedStoreIndex]?.source;
     const detailDistance = document.getElementById('detailDistance');
-    if (current && detailDistance && typeof current.lat === 'number' && typeof current.lng === 'number') {
-        detailDistance.textContent = `直線${formatDistance(haversineKm(lat, lng, current.lat, current.lng))}（非車程）`;
-    }
+    const currentDistance = current && typeof current.lat === 'number' && typeof current.lng === 'number'
+        ? formatDistance(haversineKm(lat, lng, current.lat, current.lng))
+        : '';
+    detailDistance.textContent = currentDistance;
+    detailDistance.hidden = !currentDistance;
     return n;
+}
+
+function sortRegionalStoresByDistance(lat, lng) {
+    document.querySelectorAll('.region-section .region-grid').forEach(grid => {
+        const buttons = [...grid.querySelectorAll('.regional-store')];
+        const originalOrder = new Map(buttons.map((button, index) => [button, index]));
+        const distanceFor = button => {
+            const distance = button.querySelector('.store-distance');
+            if (!distance) return null;
+            const storeLat = Number(distance.dataset.lat);
+            const storeLng = Number(distance.dataset.lng);
+            return Number.isFinite(storeLat) && Number.isFinite(storeLng)
+                ? haversineKm(lat, lng, storeLat, storeLng)
+                : null;
+        };
+        buttons.sort((a, b) => {
+            if (a.disabled !== b.disabled) return a.disabled ? 1 : -1;
+            const aDistance = distanceFor(a);
+            const bDistance = distanceFor(b);
+            if (aDistance !== null && bDistance !== null) return aDistance - bDistance;
+            if (aDistance !== null) return -1;
+            if (bDistance !== null) return 1;
+            return originalOrder.get(a) - originalOrder.get(b);
+        }).forEach(button => grid.appendChild(button));
+    });
+
+    document.querySelectorAll('.regional-store').forEach((button, index) => {
+        const ordinal = index + 1;
+        button.querySelector('.store-ordinal').textContent = ordinal;
+        const name = button.querySelector('.store-name').textContent;
+        const action = button.disabled ? '準備中' : '查看門市資訊';
+        button.setAttribute('aria-label', `第${ordinal}間，${name}，${action}`);
+    });
+
+    const selectedButton = [...document.querySelectorAll('.regional-store')]
+        .find(button => Number(button.dataset.storeIndex) === selectedStoreIndex);
+    if (selectedButton) {
+        document.getElementById('detail-number').textContent = selectedButton.querySelector('.store-ordinal').textContent;
+    }
 }
 
 function initGeo() {
@@ -962,77 +1004,37 @@ function initGeo() {
     const st  = document.getElementById('geoStatus');
     if (!btn || !st) return;
     let requestInFlight = false;
-    let selectNearestWhenReady = false;
-
-    const openNearestStore = function() {
-        const entries = regionalEntries();
-        let nearestIndex = -1;
-        let nearestDistance = Infinity;
-        entries.forEach((entry, index) => {
-            const source = entry.source;
-            if (!source || !Number.isFinite(source.lat) || !Number.isFinite(source.lng)) return;
-            const distance = haversineKm(lastGeoPosition.latitude, lastGeoPosition.longitude, source.lat, source.lng);
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                nearestIndex = index;
-            }
-        });
-        if (nearestIndex < 0) {
-            st.textContent = '目前沒有可計算距離的營運門市；仍可直接點選門市。';
-            return;
-        }
-        showRegionalStore(nearestIndex);
-        scrollSelectedStoreIntoView();
-        st.textContent = '已開啟距離最近的門市資訊（直線距離，非車程）';
-    };
-
     const failPosition = function() {
         requestInFlight = false;
-        selectNearestWhenReady = false;
         st.textContent = '無法取得定位；仍可直接點選門市，按鈕可重試。';
     };
 
     const requestPosition = function() {
         if (!navigator.geolocation) {
-            selectNearestWhenReady = false;
             st.textContent = '此瀏覽器不支援定位；仍可直接點選門市。';
             return;
         }
         if (requestInFlight) return;
 
         requestInFlight = true;
-        st.textContent = selectNearestWhenReady
-            ? '正在定位，取得位置後會開啟最近門市…'
-            : '正在取得位置以顯示各店直線距離…';
+        st.textContent = '正在取得位置…';
         try {
             navigator.geolocation.getCurrentPosition(function(pos) {
                 requestInFlight = false;
                 const n = renderDistances(pos.coords.latitude, pos.coords.longitude);
-                const shouldOpenNearest = selectNearestWhenReady;
-                selectNearestWhenReady = false;
-                if (shouldOpenNearest) {
-                    openNearestStore();
-                    return;
-                }
+                sortRegionalStoresByDistance(pos.coords.latitude, pos.coords.longitude);
                 st.textContent = n > 0
-                    ? '已顯示各店直線距離（非車程）'
+                    ? '已依所在位置更新門市順序與距離。'
                     : '目前沒有可計算距離的門市；仍可直接點選門市。';
-            }, failPosition, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
+            }, failPosition, { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 });
         } catch {
             failPosition();
         }
     };
 
     btn.addEventListener('click', function() {
-        if (lastGeoPosition) {
-            openNearestStore();
-            return;
-        }
-        selectNearestWhenReady = true;
-        st.textContent = '正在等待定位授權，取得位置後會開啟最近門市…';
         requestPosition();
     });
-    requestPosition();
 }
 
 render();
