@@ -843,7 +843,7 @@ function render() {
     ${D.hotDeals && D.hotDeals.on ? `<a class="hot-deals-btn" href="${esc(D.hotDeals.url)}" target="_blank">${esc(D.hotDeals.text)}</a>` : ''}
     ${routeFeatureMarkup()}
     <div class="geo-row">
-        <button type="button" id="locateBtn" class="geo-btn">📍 依所在位置排序門市</button>
+        <button type="button" id="locateBtn" class="geo-btn">點擊查看最近門市</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
     ${renderRegionalGrid('北區', 'north', 'north')}
@@ -961,7 +961,16 @@ function renderDistances(lat, lng) {
 }
 
 function sortRegionalStoresByDistance(lat, lng) {
-    document.querySelectorAll('.region-section .region-grid').forEach(grid => {
+    const sections = [...document.querySelectorAll('.region-section')];
+    const originalSectionOrder = new Map(sections.map((section, index) => [section, index]));
+    const sectionDistances = new Map();
+
+    sections.forEach(section => {
+        const grid = section.querySelector('.region-grid');
+        if (!grid) {
+            sectionDistances.set(section, null);
+            return;
+        }
         const buttons = [...grid.querySelectorAll('.regional-store')];
         const originalOrder = new Map(buttons.map((button, index) => [button, index]));
         const distanceFor = button => {
@@ -982,7 +991,23 @@ function sortRegionalStoresByDistance(lat, lng) {
             if (bDistance !== null) return 1;
             return originalOrder.get(a) - originalOrder.get(b);
         }).forEach(button => grid.appendChild(button));
+
+        const operatingDistances = buttons
+            .filter(button => !button.disabled)
+            .map(distanceFor)
+            .filter(distance => distance !== null);
+        sectionDistances.set(section, operatingDistances.length ? Math.min(...operatingDistances) : null);
     });
+
+    const sectionAnchor = sections.length ? sections[sections.length - 1].nextSibling : null;
+    sections.sort((a, b) => {
+        const aDistance = sectionDistances.get(a);
+        const bDistance = sectionDistances.get(b);
+        if (aDistance !== null && bDistance !== null) return aDistance - bDistance;
+        if (aDistance !== null) return -1;
+        if (bDistance !== null) return 1;
+        return originalSectionOrder.get(a) - originalSectionOrder.get(b);
+    }).forEach(section => section.parentNode.insertBefore(section, sectionAnchor));
 
     document.querySelectorAll('.regional-store').forEach((button, index) => {
         const ordinal = index + 1;
@@ -992,11 +1017,9 @@ function sortRegionalStoresByDistance(lat, lng) {
         button.setAttribute('aria-label', `第${ordinal}間，${name}，${action}`);
     });
 
-    const selectedButton = [...document.querySelectorAll('.regional-store')]
-        .find(button => Number(button.dataset.storeIndex) === selectedStoreIndex);
-    if (selectedButton) {
-        document.getElementById('detail-number').textContent = selectedButton.querySelector('.store-ordinal').textContent;
-    }
+    const nearestButton = [...document.querySelectorAll('.regional-store')]
+        .find(button => !button.disabled);
+    if (nearestButton) showRegionalStore(Number(nearestButton.dataset.storeIndex));
 }
 
 function initGeo() {
