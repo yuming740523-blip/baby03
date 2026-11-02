@@ -632,7 +632,7 @@ function buildBtns(sec) {
 }
 
 // 展示層固定採樣本順序；實際門市資料一律從 DEFAULT_DATA.sec1 讀取。
-// 兩間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
+// 四間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
 const STORE_LAYOUT = [
     { key:'內湖', name:'內湖店', region:'北區', color:'blue' },
     { key:'士林葫東', name:'士林葫東店', region:'北區', color:'pink' },
@@ -646,7 +646,9 @@ const STORE_LAYOUT = [
     { key:'桃園榮華', name:'桃園榮華店', region:'北區', color:'purple' },
     { key:'苗栗國華', name:'苗栗國華店', region:'中區', color:'pink' },
     { key:'大甲育英', name:'大甲育英店', region:'中區', color:'blue' },
-    { key:'台南東區', name:'台南東區', region:'南區', color:'green', status:'準備中' }
+    { key:'台南東區', name:'台南東區', region:'南區', color:'green', status:'準備中' },
+    { key:'高雄三民', name:'高雄三民', region:'南區', color:'green', status:'準備中' },
+    { key:'雲林北港', name:'雲林北港', region:'南區', color:'green', status:'準備中' }
 ];
 let selectedStoreIndex = 0;
 let lastGeoPosition = null;
@@ -846,6 +848,7 @@ function render() {
         <button type="button" id="locateBtn" class="geo-btn">點擊查看最近門市</button>
         <span id="geoStatus" class="geo-status" aria-live="polite"></span>
     </div>
+    <div class="region-count">🌼 11 間營運門市 · 4 間準備中 🌼</div>
     ${renderRegionalGrid('北區', 'north', 'north')}
     ${renderRegionalGrid('中區', 'central', 'central')}
     ${renderRegionalGrid('南區', 'south', 'south')}
