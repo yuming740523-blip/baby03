@@ -2,6 +2,9 @@
 
 | 日期 | 標題 | 嚴重度 | 結案類型 | commit |
 |---|---|---|---|---|
+| 2026-11-09 | [楊梅環東店上架與專屬落地頁](2026-11-09_yangmei-huandong-store-onboarding.md) | P3 | Feature / Store onboarding / Production verification | 見 git log「onboard Yangmei Huandong」 |
+| 2026-11-02 | [移除首頁營運與準備中數量標語](2026-11-02_remove_store_count_heading.md) | P3 | UI content removal / Production verification | `a2fc242` |
+| 2026-11-02 | [南區新增高雄三民、雲林北港準備中與發布驗收](2026-11-02_south_preparing_stores_publish.md) | P3 | Content update / Production verification / Cache verification correction | `1f13ecf` |
 | 2026-10-15 | [最近門市跨區置頂與詳情同步修復](2026-10-15_nearest_store_cross_region_order.md) | P2 | Bug Fix / UX correction / Production verification | `54efdb4` |
 | 2026-10-15 | [移除首頁「11 間營運門市 · 2 間準備中」標語](2026-10-15_remove_store_count_heading.md) | P3 | UI content removal / Production verification | `a629b47` |
 | 2026-10-15 | [載入顯示門市距離、最近門市跳轉與榮華地址對齊八德](2026-10-15_auto_distance_nearest_store_ronghua_bade.md) | P2 | Feature + Store data correction / Production verification | `bcfad71` |
@@ -10,6 +13,7 @@
 | 2026-10-04 | [大甲育英店地址補註大甲國中對面](2026-10-04_dajia_address_school_landmark.md) | P3 | Content update / Production source verification | `fefdb20` |
 | 2026-09-19 | [大甲育英與內湖門市查核座標、落地頁分流與新增門市 SOP](2026-09-19_dajia-neihu-verified-store-coordinates.md) | P2 | Bug Fix / Store onboarding data integrity / Production verification | 71db1bb + 47ad049 + e2d52d8 + a884e42 |
 | 2026-09-08 | [內湖門市優先順位與卡片視覺層級調整](2026-09-08_neihu-store-priority-visual-hierarchy.md) | P3 | Feature / UI hierarchy adjustment | `dfecf5f` + `3e3d28b` |
+| 2026-09-06 | [內湖 landing 上線與 FB 廣告開投驗證](2026-09-06_neihu-fb-ad-launch.md) | P2 | Feature / Platform Launch + Process Follow-up | `a5cba35` + Meta IDs |
 | 2026-08-23 | [士林／榮華依 utm 導向各店專屬美食團購 FB 社團](2026-08-23_store-fb-group-routing.md) | P2 | Feature（社團層分店分流）| `f814fdc` |
 | 2026-08-11 | [門市地址可開地圖 + 直線距離 + 誤點修復 + 首頁效能優化](2026-08-11_store-map-distance-and-perf.md) | P2（內含 2 個 P1 未爆彈） | Feature + Bug Fix（誤點/資料漂移/CDN 快取）+ 效能 | `789ae09`…`44ed4ee`（5 筆） |
 | 2026-08-09 | [新增桃園榮華店 + 門市地址上架 + 修掉編輯器資料漂移地雷 + 首頁簡化與 SEO/分享圖](2026-08-09_ronghua-address-editor-drift.md) | P1 | Bug Fix（資料漂移防護）+ Feature + SEO | `7e956a7`…`81c0f1e`（8 筆） |

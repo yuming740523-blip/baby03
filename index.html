@@ -378,6 +378,14 @@ const DEFAULT_DATA = {
         },
         {
             "t": "line",
+            "label": "🍴【楊梅環東店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/cpcwiucYsileAIXdSR-4MuqdU7AeDKEuhDHPNg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
+            "addr": "桃園市楊梅區環東路454號(宜康美藥局)",
+            "lat": 24.9100688,
+            "lng": 121.1571186
+        },
+        {
+            "t": "line",
             "label": "🍴【新莊中港店】美食團購LINE下單",
             "url": "https://line.me/ti/g2/yCDJ5lTIskMFOjrSFEb1BixRrMLS6Br8js4fPA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
             "addr": "新北市新莊區恆安里中港路50號(鄰新莊國小)",
@@ -506,6 +514,8 @@ const STORE_ROUTES = [
     { rx: /neihu|內湖/i,    key: '內湖' },
     // 大甲專屬落地頁：?utm_campaign=dajia_yuying&utm_content=dajia_page
     { rx: /dajia|大甲|育英/i, key: '大甲育英' },
+    // 楊梅專屬落地頁：?utm_campaign=yangmei_huandong&utm_content=yangmei_page
+    { rx: /yangmei|楊梅|環東/i, key: '楊梅環東' },
     // 新莊專屬落地頁：?utm_campaign=xinzhuang_zhonggang&utm_content=xinzhuang_page
     { rx: /xinzhuang|新莊|中港/i, key: '新莊中港' },
     { rx: /banqiao|板橋/i,  key: '板橋宏國' },
@@ -632,7 +642,7 @@ function buildBtns(sec) {
 }
 
 // 展示層固定採樣本順序；實際門市資料一律從 DEFAULT_DATA.sec1 讀取。
-// 四間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
+// 三間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
 const STORE_LAYOUT = [
     { key:'內湖', name:'內湖店', region:'北區', color:'blue' },
     { key:'士林葫東', name:'士林葫東店', region:'北區', color:'pink' },
@@ -642,7 +652,7 @@ const STORE_LAYOUT = [
     { key:'桃園蓮埔', name:'桃園蓮埔店', region:'北區', color:'orange' },
     { key:'八德金和', name:'八德金和店', region:'北區', color:'green' },
     { key:'中壢環北', name:'中壢環北店', region:'北區', color:'blue' },
-    { key:'楊梅環中', name:'楊梅環中', region:'北區', color:'orange', status:'準備中' },
+    { key:'楊梅環東', name:'楊梅環東店', region:'北區', color:'orange' },
     { key:'桃園榮華', name:'桃園榮華店', region:'北區', color:'purple' },
     { key:'苗栗國華', name:'苗栗國華店', region:'中區', color:'pink' },
     { key:'大甲育英', name:'大甲育英店', region:'中區', color:'blue' },
