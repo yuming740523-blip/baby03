@@ -447,6 +447,14 @@ const DEFAULT_DATA = {
             "addr": "苗栗市文山里國華路780號",
             "lat": 24.5718236,
             "lng": 120.8146227
+        },
+        {
+            "t": "line",
+            "label": "🍴【雲林北港店】美食團購LINE下單",
+            "url": "https://line.me/ti/g2/a2qcsv75rO7qWVWrQbEMwMR68SL5HYArxjGtFg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default",
+            "addr": "雲林縣北港鎮光復里大同路287號",
+            "lat": 23.5724524,
+            "lng": 120.2985780
         }
     ],
     "sec2Title": "社群連結",
@@ -642,7 +650,7 @@ function buildBtns(sec) {
 }
 
 // 展示層固定採樣本順序；實際門市資料一律從 DEFAULT_DATA.sec1 讀取。
-// 三間準備中只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
+// 準備中的門市只存在於此展示清單，沒有 URL、地址或座標，也不加入 DEFAULT_DATA。
 const STORE_LAYOUT = [
     { key:'內湖', name:'內湖店', region:'北區', color:'blue' },
     { key:'士林葫東', name:'士林葫東店', region:'北區', color:'pink' },
@@ -658,7 +666,7 @@ const STORE_LAYOUT = [
     { key:'大甲育英', name:'大甲育英店', region:'中區', color:'blue' },
     { key:'台南東區', name:'台南東區', region:'南區', color:'green', status:'準備中' },
     { key:'高雄三民', name:'高雄三民', region:'南區', color:'green', status:'準備中' },
-    { key:'雲林北港', name:'雲林北港', region:'南區', color:'green', status:'準備中' }
+    { key:'雲林北港', name:'雲林北港店', region:'南區', color:'green' }
 ];
 let selectedStoreIndex = 0;
 let lastGeoPosition = null;
