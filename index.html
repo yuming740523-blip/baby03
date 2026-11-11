@@ -173,11 +173,6 @@
         .regional-store:focus-visible { outline:3px solid #186ac7; outline-offset:2px; }
         .regional-store[aria-pressed="true"] { outline:2px solid var(--store-dot); outline-offset:1px; }
         .regional-store.is-featured { border-width:2px; box-shadow:0 3px 12px rgba(233,30,99,.25); }
-        .store-ordinal {
-            display:grid; place-items:center; flex:0 0 24px; width:24px; height:24px;
-            border-radius:50%; background:var(--store-dot); color:#fff; font-size:13px;
-            font-weight:800; line-height:1; box-shadow:0 1px 3px rgba(0,0,0,.2);
-        }
         .store-label { min-width:0; flex:1; text-align:center; }
         .store-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
             font-size:clamp(10px,3vw,12px); font-weight:750; letter-spacing:-.03em; }
@@ -205,8 +200,6 @@
         .detail-panel { margin:13px 0 16px; border-radius:22px; background:#fff; color:#273244; box-shadow:0 4px 18px rgba(0,0,0,.14); }
         .detail-content { padding:18px; text-align:left; }
         .detail-head { display:flex; align-items:flex-start; gap:12px; }
-        .detail-number { display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px;
-            border-radius:50%; background:#2065bd; color:#fff; font-weight:800; }
         .detail-head h2 { margin:1px 0 2px; color:#273244; font-size:20px; }
         .detail-content p { margin:5px 0; color:#4f5661; font-size:14px; line-height:1.55; overflow-wrap:anywhere; }
         .detail-content .detail-distance { color:#b71657; font-weight:700; }
@@ -219,7 +212,6 @@
         @media (max-width:340px) {
             .region-grid { gap:3px; }
             .regional-store { padding:3px 2px; }
-            .store-ordinal { flex-basis:22px; width:22px; height:22px; font-size:12px; }
             .route-feature { gap:6px; padding:10px; }
             .route-feature-name { font-size:15px; }
             .route-feature-actions a { padding:6px; font-size:11px; }
@@ -718,9 +710,8 @@ function renderRegionalGrid(region, id, className) {
             ? `<span class="btn-distance store-distance" data-lat="${source.lat}" data-lng="${source.lng}"></span>` : '';
         const label = source ? '查看門市資訊' : store.status;
         return `<button type="button" class="regional-store store-${store.color}${featured ? ' is-featured' : ''}"
-                    data-store-index="${layoutIndex}" aria-label="第${layoutIndex + 1}間，${esc(store.name)}，${esc(label)}"
+                    data-store-index="${layoutIndex}" aria-label="${esc(store.name)}，${esc(label)}"
                     aria-pressed="false"${store.status ? ' disabled' : ''}>
-                    <span class="store-ordinal">${layoutIndex + 1}</span>
                     <span class="store-label"><span class="store-name">${esc(store.name)}</span>${store.status ? `<small class="store-soon">${esc(store.status)}</small>` : distance}</span>
                 </button>`;
     }).join('');
@@ -754,9 +745,8 @@ function renderOtherStores() {
         const distance = hasGeo
             ? `<span class="btn-distance store-distance" data-lat="${source.lat}" data-lng="${source.lng}"></span>` : '';
         return `<button type="button" class="regional-store store-${store.color}${featured ? ' is-featured' : ''}"
-                    data-store-index="${layoutIndex}" aria-label="第${layoutIndex + 1}間，${esc(store.name)}，查看門市資訊"
+                    data-store-index="${layoutIndex}" aria-label="${esc(store.name)}，查看門市資訊"
                     aria-pressed="false">
-                    <span class="store-ordinal">${layoutIndex + 1}</span>
                     <span class="store-label"><span class="store-name">${esc(store.name)}</span>${distance}</span>
                 </button>`;
     }).join('');
@@ -773,11 +763,6 @@ function showRegionalStore(index) {
     selectedStoreIndex = index;
     document.querySelectorAll('.regional-store').forEach(button =>
         button.setAttribute('aria-pressed', String(Number(button.dataset.storeIndex) === index)));
-    const selectedButton = [...document.querySelectorAll('.regional-store')]
-        .find(button => Number(button.dataset.storeIndex) === index);
-    document.getElementById('detail-number').textContent = selectedButton
-        ? selectedButton.querySelector('.store-ordinal').textContent
-        : index + 1;
     document.getElementById('detail-title').textContent = store.name;
     document.getElementById('detail-region').textContent = store.region;
     document.getElementById('detail-address').textContent = `📍 ${source.addr || ''}`;
@@ -873,7 +858,7 @@ function render() {
     <p class="region-hint">點選門市查看地址、地圖與 LINE 社群。</p>
     <section class="detail-panel" id="selected-store" aria-labelledby="detail-title">
         <div class="detail-content">
-            <div class="detail-head"><span class="detail-number" id="detail-number"></span><div><h2 id="detail-title"></h2><p id="detail-region"></p></div></div>
+            <div class="detail-head"><div><h2 id="detail-title"></h2><p id="detail-region"></p></div></div>
             <p id="detail-address"></p>
             <p class="detail-distance" id="detailDistance" hidden></p>
             <div class="detail-actions">
@@ -1028,14 +1013,6 @@ function sortRegionalStoresByDistance(lat, lng) {
         if (bDistance !== null) return 1;
         return originalSectionOrder.get(a) - originalSectionOrder.get(b);
     }).forEach(section => section.parentNode.insertBefore(section, sectionAnchor));
-
-    document.querySelectorAll('.regional-store').forEach((button, index) => {
-        const ordinal = index + 1;
-        button.querySelector('.store-ordinal').textContent = ordinal;
-        const name = button.querySelector('.store-name').textContent;
-        const action = button.disabled ? '準備中' : '查看門市資訊';
-        button.setAttribute('aria-label', `第${ordinal}間，${name}，${action}`);
-    });
 
     const nearestButton = [...document.querySelectorAll('.regional-store')]
         .find(button => !button.disabled);
